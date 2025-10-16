@@ -1,32 +1,25 @@
 package com.isimm.suivi_note.services;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.isimm.suivi_note.dto.StudentDto;
-import com.isimm.suivi_note.models.Role;
-import com.isimm.suivi_note.models.Student;
-import com.isimm.suivi_note.repositories.AdminRepo;
-import com.isimm.suivi_note.repositories.StudentRepo;
+import com.isimm.suivi_note.repositories.UserRepo;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
-public class UserService {
-    private final StudentRepo studentRepo;
-    private final AdminRepo adminRepo;
+@RequiredArgsConstructor
+public class UserService implements UserDetailsService {
+    
+    private final UserRepo userRepository;
 
-    public Student addStudent(StudentDto studentDto){
-        Student student = Student.builder()
-                .cin(studentDto.cin())
-                .firstName(studentDto.firstName())
-                .lastName(studentDto.lastName())
-                .email(studentDto.email())
-                .password(studentDto.password())
-                .registrationNumber(studentDto.registrationNumber())
-                .role(Role.STUDENT)
-                .build();
-        return studentRepo.save(student);
-
+    @Override
+    public UserDetails loadUserByUsername(String userCin) throws UsernameNotFoundException {
+        return userRepository.findByCin(userCin)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+    
+
 }

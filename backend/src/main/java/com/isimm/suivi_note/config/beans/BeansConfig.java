@@ -1,0 +1,40 @@
+package com.isimm.suivi_note.config.beans;
+
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.isimm.suivi_note.services.UserService;
+
+import lombok.RequiredArgsConstructor;
+
+@Configuration
+@RequiredArgsConstructor
+public class BeansConfig {
+
+    private final UserService userDetailService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder(10);
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(final AuthenticationConfiguration config) throws Exception{
+        return config.getAuthenticationManager();
+    }
+
+    // @Bean 
+    // public AuthenticationProvider authenticationProvider (PasswordEncoder passwordEncoder){
+    //     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+    //     authProvider.setPasswordEncoder(passwordEncoder);
+    //     authProvider.setUserDetailsService(userDetailService);
+    //     return authProvider;
+    // }
+}

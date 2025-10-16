@@ -6,8 +6,7 @@ public record StudentDto(
     String firstName,
     String lastName,
     String email,
-    String password,
-    String registrationNumber
+    String password
 ) {
 
 }
