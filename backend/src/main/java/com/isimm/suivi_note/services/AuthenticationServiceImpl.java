@@ -6,8 +6,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.isimm.suivi_note.enums.Role;
 import com.isimm.suivi_note.models.Admin;
-import com.isimm.suivi_note.models.Role;
 import com.isimm.suivi_note.models.Student;
 import com.isimm.suivi_note.models.User;
 import com.isimm.suivi_note.models.UserIsimm;

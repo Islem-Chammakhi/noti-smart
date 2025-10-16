@@ -1,4 +1,4 @@
-package com.isimm.suivi_note.models;
+package com.isimm.suivi_note.enums;
 
 public enum Role {
     ADMIN,

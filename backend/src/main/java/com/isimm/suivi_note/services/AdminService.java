@@ -3,8 +3,8 @@ package com.isimm.suivi_note.services;
 import org.springframework.stereotype.Service;
 
 import com.isimm.suivi_note.dto.StudentDto;
+import com.isimm.suivi_note.enums.Role;
 import com.isimm.suivi_note.models.Admin;
-import com.isimm.suivi_note.models.Role;
 import com.isimm.suivi_note.repositories.AdminRepo;
 
 import lombok.RequiredArgsConstructor;
