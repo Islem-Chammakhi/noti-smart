@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.isimm.suivi_note.enums.Role;
 import com.isimm.suivi_note.models.Admin;
+import com.isimm.suivi_note.models.Filiere;
 import com.isimm.suivi_note.models.Student;
 import com.isimm.suivi_note.models.User;
 import com.isimm.suivi_note.models.UserIsimm;
@@ -60,16 +61,19 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
     @Override
     @Transactional
     public void register(final RegistrationRequest request) {
+        Filiere f =new Filiere();
+        f.setId("ING2_INFO");
         checkUserCin(request.getCin());
         UserIsimm userIsimm=checkUserIsimm(request.getCin());
         checkUserPasswords(request.getPassword(),request.getConfirmPassword());
-        User user =Admin.builder()
+        User user =Student.builder()
                 .cin(userIsimm.getCin())
                 .firstName(userIsimm.getFirstName())
                 .lastName(userIsimm.getLastName())
                 .email(userIsimm.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.ADMIN)
+                .role(Role.STUDENT)
+                .filiere_id(f)
                 .build();
         userRepository.save(user);
         

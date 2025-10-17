@@ -32,7 +32,7 @@ public class Mark {
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    private Student student_id;
 
     // 🔹 Plusieurs moyennes concernent une même matière
     @ManyToOne

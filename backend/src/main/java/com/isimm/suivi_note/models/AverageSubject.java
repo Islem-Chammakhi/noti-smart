@@ -30,7 +30,7 @@ public class AverageSubject {
     @Column(nullable = false)
     private double average;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private double coefficient;
 
     @ManyToOne

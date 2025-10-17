@@ -1,5 +1,9 @@
 package com.isimm.suivi_note.repositories;
 
-public interface AverageSubjectRepo {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.isimm.suivi_note.models.AverageSubject;
+
+public interface AverageSubjectRepo extends JpaRepository<AverageSubject,Long> {
 
 }

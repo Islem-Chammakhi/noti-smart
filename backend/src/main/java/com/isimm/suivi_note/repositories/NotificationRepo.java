@@ -1,5 +1,9 @@
 package com.isimm.suivi_note.repositories;
 
-public interface NotificationRepo {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.isimm.suivi_note.models.Notification;
+
+public interface NotificationRepo  extends JpaRepository<Notification,Long>{
 
 }
