@@ -48,7 +48,7 @@ public class AdminController {
     public ResponseEntity<String> uploadMarks(@RequestParam("file") MultipartFile file) {
         try {
             excelImportService.importExcel(file);
-            return ResponseEntity.ok("File uploaded successfully ! ");
+            return ResponseEntity.ok("Marks uploaded successfully in db ! ");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error uploading file : " + e.getMessage());

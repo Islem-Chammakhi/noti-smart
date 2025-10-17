@@ -29,8 +29,8 @@ public class StudentService {
         return studentRepo.save(student);
     }
 
-    public Optional<Student> getStudentByCin(String cin) {
-        return studentRepo.findByCin(cin);
+    public Student getStudentByCin(String cin) {
+        return studentRepo.findByCin(cin).orElseThrow(()-> new RuntimeException("student with cin "+cin+" not found !"));
     }
 
 }
