@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/api/student")
 @AllArgsConstructor
 public class StudentController {
     private final StudentService studentService;

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
-@RequestMapping("/userisimm")
+@RequestMapping("/api/userisimm")
 @RequiredArgsConstructor
 public class UserIsimmController {
 
