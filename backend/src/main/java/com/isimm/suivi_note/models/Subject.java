@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,12 +36,12 @@ public class Subject {
     private double coefficient;
 
     @ManyToOne
-    @JoinColumn(name = "filiere_id", nullable = false)
-    private Filiere filiere_id;
+    @JoinColumn(name = "filiere_id", nullable = false )
+    private Filiere filiere;
 
-    @OneToMany(mappedBy = "subject_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AverageSubject> averageSubject;
 
-    @OneToMany(mappedBy = "subject_id",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "subject",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<SubjectEvalType> subjectEvalTypes;
 }

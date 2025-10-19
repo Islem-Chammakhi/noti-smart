@@ -12,7 +12,7 @@ import com.isimm.suivi_note.models.SubjectEvalType;
 
 public interface SubjectEvalTypeRepo extends JpaRepository<SubjectEvalType,Long> {
 
-    @Query("SELECT s FROM SubjectEvalType s WHERE s.subject_id.id = :code AND s.eval_type.label = :label")
+    @Query("SELECT s FROM SubjectEvalType s WHERE s.subject.id = :code AND s.evalType.label = :label")
 Optional<SubjectEvalType> findBySubjectCodeAndEvaluationTypeLabel(@Param("code") String code, @Param("label") EvaluationLabel label);
 
 }

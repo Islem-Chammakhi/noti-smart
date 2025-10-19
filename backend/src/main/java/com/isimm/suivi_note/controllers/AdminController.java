@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.isimm.suivi_note.dto.StudentDto;
+import com.isimm.suivi_note.dto.StudentDTO;
 import com.isimm.suivi_note.models.Admin;
 
 import com.isimm.suivi_note.repositories.AdminRepo;
@@ -32,7 +32,7 @@ public class AdminController {
     private final AdminRepo adminRepo;
     private final ExcelImportService excelImportService;
      @PostMapping("/")
-    public ResponseEntity<Admin> addStudent(@Valid @RequestBody StudentDto dto) {
+    public ResponseEntity<Admin> addStudent(@Valid @RequestBody StudentDTO dto) {
         
         
        return ResponseEntity.ok(adminService.addAdmin(dto));

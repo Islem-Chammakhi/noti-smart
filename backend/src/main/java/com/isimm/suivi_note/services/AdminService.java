@@ -2,7 +2,7 @@ package com.isimm.suivi_note.services;
 
 import org.springframework.stereotype.Service;
 
-import com.isimm.suivi_note.dto.StudentDto;
+import com.isimm.suivi_note.dto.StudentDTO;
 import com.isimm.suivi_note.enums.Role;
 import com.isimm.suivi_note.models.Admin;
 import com.isimm.suivi_note.repositories.AdminRepo;
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminService {
     private final AdminRepo adminRepo;
 
-    public Admin addAdmin(StudentDto studentDto){
+    public Admin addAdmin(StudentDTO studentDto){
         Admin admin = Admin.builder()
                 .cin(studentDto.cin())
                 .firstName(studentDto.firstName())

@@ -29,7 +29,7 @@ public class Notification {
     
     @ManyToOne
     @JoinColumn(name = "student_id")
-    private Student student_id;
+    private Student student;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

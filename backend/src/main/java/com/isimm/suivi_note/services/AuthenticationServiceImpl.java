@@ -73,7 +73,7 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
                 .email(userIsimm.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.STUDENT)
-                .filiere_id(f)
+                .filiere(f)
                 .build();
         userRepository.save(user);
         

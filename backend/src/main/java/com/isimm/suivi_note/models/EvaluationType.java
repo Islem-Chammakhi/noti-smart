@@ -38,7 +38,7 @@ public class EvaluationType {
     @Column(nullable = false)
     private double coefficient;
 
-    @OneToMany(mappedBy = "eval_type",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "evalType",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<SubjectEvalType> subjectEvalTypes;
 
 }

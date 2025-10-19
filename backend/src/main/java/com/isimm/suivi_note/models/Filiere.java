@@ -25,9 +25,9 @@ public class Filiere {
 
     // private String nom ;
 
-    @OneToMany(mappedBy = "filiere_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "filiere", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Student> students;
 
-    @OneToMany(mappedBy = "filiere_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "filiere", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Subject> subjects;
 }

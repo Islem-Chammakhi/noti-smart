@@ -10,6 +10,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +24,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "subject_id"}))
 public class AverageSubject {
 
     @Id
@@ -31,16 +34,16 @@ public class AverageSubject {
     @Column(nullable = false)
     private double average;
 
-    @Column(nullable = true)
-    private double coefficient;
+    // @Column(nullable = true)
+    // private double coefficient;
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
-    private Student student_id;
+    private Student student;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)
-    private Subject subject_id;
+    private Subject subject;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
