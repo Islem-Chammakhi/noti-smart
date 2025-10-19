@@ -17,7 +17,7 @@ import com.isimm.suivi_note.dto.StudentDto;
 import com.isimm.suivi_note.models.Admin;
 
 import com.isimm.suivi_note.repositories.AdminRepo;
-import com.isimm.suivi_note.services.AdminService;
+import com.isimm.suivi_note.services.auth.AdminService;
 import com.isimm.suivi_note.services.ExcelImportService;
 
 import jakarta.validation.Valid;
