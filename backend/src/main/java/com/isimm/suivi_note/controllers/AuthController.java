@@ -1,9 +1,10 @@
 package com.isimm.suivi_note.controllers;
 
+import com.isimm.suivi_note.dto.AuthOtpLoginReq;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.isimm.suivi_note.services.JWTService;
+import com.isimm.suivi_note.services.auth.JWTService;
 import com.isimm.suivi_note.utils.auth.AuthenticationService;
 import com.isimm.suivi_note.utils.auth.request.AuthenticationRequest;
 import com.isimm.suivi_note.utils.auth.request.RefreshRequest;
@@ -30,12 +31,19 @@ public class AuthController {
     private final JWTService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@Valid @RequestBody final AuthenticationRequest req,HttpServletResponse response) {
-        AuthenticationResponse authResponse= this.authenticationService.login(req);
+    public ResponseEntity<String> login(@Valid @RequestBody final AuthenticationRequest req,HttpServletResponse response) {
+        boolean authResponse= this.authenticationService.login(req);
+
+        return ResponseEntity.ok("authentication was "+authResponse);
+    }
+
+    @PostMapping("/otp")
+    public ResponseEntity<Void> loginOTP(@Valid @RequestBody final AuthOtpLoginReq req, HttpServletResponse response) {
+        AuthenticationResponse authResponse= this.authenticationService.loginWithOTP(req);
         Cookie accessTokenCookie = new Cookie("accessToken", authResponse.getAccessToken());
-        accessTokenCookie.setHttpOnly(true);     
+        accessTokenCookie.setHttpOnly(true);
         // accessTokenCookie.setSecure(true);   HTTPS
-        accessTokenCookie.setPath("/");    
+        accessTokenCookie.setPath("/");
         accessTokenCookie.setMaxAge(15*60);
 
         Cookie refreshTokenCookie = new Cookie("refreshToken", authResponse.getRefreshToken());
@@ -73,6 +81,5 @@ public class AuthController {
 
         return ResponseEntity.ok().build();
     }
-    
 
 }
