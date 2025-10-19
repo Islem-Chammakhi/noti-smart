@@ -47,7 +47,10 @@ public class User  implements UserDetails {
     private String email;
     @NotBlank(message = "password is missing")
     private String password;
-    
+
+    @Column
+    private String otp;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role ;
