@@ -1,21 +1,14 @@
 package com.isimm.suivi_note.controllers;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.web.bind.annotation.*;
 
 import com.isimm.suivi_note.models.UserIsimm;
 import com.isimm.suivi_note.repositories.UserIsimmRepo;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import java.util.List;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 
 @RestController
@@ -31,9 +24,8 @@ public class UserIsimmController {
     }
 
     @GetMapping()
-    public List<UserIsimm> getMethodName(@RequestParam String param) {
+    public List<UserIsimm> getMethodName() {
         return userIsimmRepo.findAll();
     }
-    
     
 }
