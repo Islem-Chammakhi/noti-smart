@@ -40,13 +40,11 @@ public class StudentController {
     private final StudentRepo studentRep;
     @PostMapping("/")
     public ResponseEntity<?> addStudent(@Valid @RequestBody StudentDto dto) {
-        
-        
         return ResponseEntity.ok(studentService.addStudent(dto));
     }
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     @GetMapping("/")
-    public ResponseEntity<List<Student>> getGetStudent () {
+    public ResponseEntity<List<Student>> getStudent () {
         return ResponseEntity.ok(studentRep.findAll());
     }
     
