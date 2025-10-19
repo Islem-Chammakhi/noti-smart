@@ -1,4 +1,4 @@
-package com.isimm.suivi_note.services;
+package com.isimm.suivi_note.services.auth;
 
 import org.springframework.stereotype.Service;
 
