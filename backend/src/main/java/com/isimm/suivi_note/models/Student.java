@@ -1,14 +1,13 @@
 package com.isimm.suivi_note.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
 @Entity
+@AllArgsConstructor 
 @DiscriminatorValue("STUDENT")
 @SuperBuilder
 @NoArgsConstructor
@@ -32,4 +31,6 @@ public class Student extends User {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
 
+    @Column(nullable = false, unique = true)
+    private String nce;
 }
