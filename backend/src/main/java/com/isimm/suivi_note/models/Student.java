@@ -31,6 +31,7 @@ public class Student extends User {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
 
-    @Column(nullable = false, unique = true)
+    //TODO: Change this to nullable = false and remove null values in DB
+    @Column(unique = true)
     private String nce;
 }
