@@ -31,6 +31,7 @@ public class AuthController {
     private final JWTService jwtService;
 
     @PostMapping("/login")
+    //TODO: Why does this returns cookie with refresh token
     public ResponseEntity<String> login(@Valid @RequestBody final AuthenticationRequest req,HttpServletResponse response) {
         boolean authResponse= this.authenticationService.login(req);
 
