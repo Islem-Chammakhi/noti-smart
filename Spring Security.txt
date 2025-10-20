@@ -1,0 +1,3 @@
+Adding spring security blocks all requests
+Authentication passes through filters, most prominently the UsernamePasswordAuthenticationFilter
+
