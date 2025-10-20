@@ -1,28 +1,28 @@
 import { AppSideBar } from "@/components/AppSideBar";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { ChartSpline, PersonStanding, File } from "lucide-react";
+import { ChartSpline } from "lucide-react";
 
-export default function AdminLayout({
+export default function StudentLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const items = [
     {
-      title: "Statistique",
-      url: "/admin/stats/filiere",
+      title: "Notes",
+      url: "/student/marks",
       icon: ChartSpline,
     },
-    {
-      title: "Note des étudiants",
-      url: "/admin/students",
-      icon: PersonStanding,
-    },
-    {
-      title: "Importer des notes",
-      url: "/admin/upload",
-      icon: File,
-    },
+    // {
+    //   title: "Note des étudiants",
+    //   url: "/admin/students",
+    //   icon: PersonStanding,
+    // },
+    // {
+    //   title: "Importer des notes",
+    //   url: "/admin/upload",
+    //   icon: File,
+    // },
   ];
   return (
     <div className="min-h-screen flex flex-col">

@@ -149,7 +149,7 @@ function ActionButtons({ onUpload, onClear, disabled }: ActionButtonsProps) {
         <Upload size={18} />
         Envoyer tous
       </Button>
-      <Button onClick={onClear} disabled={disabled} size="sm">
+      <Button onClick={onClear} disabled={disabled}>
         <Trash2 size={18} />
         Tout effacer
       </Button>
