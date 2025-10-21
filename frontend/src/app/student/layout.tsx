@@ -1,6 +1,6 @@
 import { AppSideBar } from "@/components/AppSideBar";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { ChartSpline } from "lucide-react";
+import { BookOpenCheck, ChartSpline } from "lucide-react";
 
 export default function StudentLayout({
   children,
@@ -11,18 +11,13 @@ export default function StudentLayout({
     {
       title: "Notes",
       url: "/student/marks",
+      icon: BookOpenCheck,
+    },
+    {
+      title: "Statistiques",
+      url: "/student/stats",
       icon: ChartSpline,
     },
-    // {
-    //   title: "Note des étudiants",
-    //   url: "/admin/students",
-    //   icon: PersonStanding,
-    // },
-    // {
-    //   title: "Importer des notes",
-    //   url: "/admin/upload",
-    //   icon: File,
-    // },
   ];
   return (
     <div className="min-h-screen flex flex-col">

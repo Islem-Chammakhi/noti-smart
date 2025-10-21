@@ -9,9 +9,9 @@ export default function AdminLayout({
 }) {
   const items = [
     {
-      title: "Statistique",
-      url: "/admin/stats/filiere",
-      icon: ChartSpline,
+      title: "Importer des notes",
+      url: "/admin/upload",
+      icon: File,
     },
     {
       title: "Note des étudiants",
@@ -19,9 +19,9 @@ export default function AdminLayout({
       icon: PersonStanding,
     },
     {
-      title: "Importer des notes",
-      url: "/admin/upload",
-      icon: File,
+      title: "Statistique",
+      url: "/admin/stats/filiere",
+      icon: ChartSpline,
     },
   ];
   return (
