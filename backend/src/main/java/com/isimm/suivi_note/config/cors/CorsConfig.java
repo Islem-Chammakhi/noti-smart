@@ -14,7 +14,7 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfig = new CorsConfiguration();
         corsConfig.setAllowedOrigins(List.of("http://localhost:3000")); // React default port
-        corsConfig.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT"));
+        corsConfig.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT", "ACCEPT")); // I think ACCEPT belong to SSE methods, not sure
         corsConfig.setAllowedHeaders(List.of("Authorization", "Content-type"));
         corsConfig.setAllowCredentials(true);
 

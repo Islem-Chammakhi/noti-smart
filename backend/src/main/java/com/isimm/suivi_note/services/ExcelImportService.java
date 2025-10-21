@@ -2,9 +2,11 @@ package com.isimm.suivi_note.services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.isimm.suivi_note.dto.notification.NoteDTO;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -27,6 +29,7 @@ public class ExcelImportService {
     private final SubjectEvalTypeService subjectEvalTypeService;
     private final StudentService studentService;
     private final MarkService markService;
+    private final NotificationService notificationService;
 
     // @Transactional
     public void importExcel(MultipartFile file) throws IOException {
@@ -43,22 +46,33 @@ public class ExcelImportService {
 }
     @Transactional
     private void importMarks(Sheet sheet,SubjectEvalType subjectEvalType) {
-    for (int i = 1; i <= sheet.getLastRowNum(); i++) { // on saute la première ligne (en-têtes)
-        Row row = sheet.getRow(i);
-        if (row == null || isRowEmpty(row)) {System.out.println("row "+i+" is empty");continue;};
-        Cell cinCell = row.getCell(5);
-        Cell markCell = row.getCell(8);
-        String cin = cinCell.getStringCellValue();
-        double mark = markCell.getNumericCellValue();
-        if(markCell ==null ||cinCell==null || markCell.getCellType() != CellType.NUMERIC || cinCell.getCellType() == CellType.BLANK){
-            throw new RuntimeException("invalid inputs in file xl we cannot add marks ");
-        }
-        Student student = studentService.getStudentByCin(cin);
-        markService.addMark(mark, student, subjectEvalType);
-        System.out.println(cin + " - "  + " : "+ mark+" added successfully ! in db");
+        System.out.println("Number of lines = "+ sheet.getLastRowNum());
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) { // on saute la première ligne (en-têtes)
+            Row row = sheet.getRow(i);
+            if (row == null || isRowEmpty(row)) {System.out.println("row "+i+" is empty");continue;};
+            Cell cinCell = row.getCell(5);
 
-    }
-    
+            Cell markCell = row.getCell(7);
+            String cin = cinCell.getStringCellValue();
+            double mark = markCell.getNumericCellValue();
+
+            if(markCell ==null ||cinCell==null || markCell.getCellType() != CellType.NUMERIC || cinCell.getCellType() == CellType.BLANK){
+                throw new RuntimeException("invalid inputs in file xl we cannot add marks ");
+            }
+            Student student = studentService.getStudentByCin(cin);
+            markService.addMark(mark, student, subjectEvalType);
+
+            NoteDTO noteDTO= NoteDTO.builder()
+                        .value(mark)
+                        .matiere(subjectEvalType.getSubject().getNom())
+                        .dateSaisie(LocalDateTime.now())
+                        .typeEval(subjectEvalType.getEvalType().getLabel())
+                        .build();
+            notificationService.sendNote(noteDTO, cin);
+            System.out.println(cin + " - "  + " : "+ mark+" added successfully ! in db");
+
+            }
+
     }
 
     
