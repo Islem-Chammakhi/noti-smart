@@ -4,6 +4,7 @@ import AuthForm from "@/components/AuthForm";
 import { useRouter } from "next/navigation";
 import z from "zod";
 
+// File intermidiare, ta3ml appel l deux fichiers fil page.tsx. Send
 const VerifyOtpPage = () => {
   const fields = [{ name: "otp", placeholder: "code otp ", type: "number" }];
 
