@@ -3,6 +3,9 @@
 import AuthForm from "@/components/AuthForm";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
+import myApi from "@/lib/api"
+
+
 const LoginPage = () => {
   const fields = [
     { name: "cin", placeholder: "CIN", type: "number" },
@@ -27,8 +30,14 @@ const LoginPage = () => {
 
   const router = useRouter();
   const handleLogin = (data: { cin: string; password: string }) => {
-    console.log("Login data:", data);
-    router.push("/verify");
+    myApi.login(data).then(res=>{
+      if(res.status ==200){
+        router.push("/verify");
+
+      }
+    }).catch(e =>{
+      console.error("Error logging in", e)
+    })
   };
 
   return (
