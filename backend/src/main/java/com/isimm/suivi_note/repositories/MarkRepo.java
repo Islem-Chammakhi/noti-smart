@@ -15,4 +15,7 @@ public interface MarkRepo extends JpaRepository<Mark,Long> {
 
     @Query("SELECT m FROM Mark m WHERE m.student = :student AND m.subjectEvalType.subject = :subject")
     List<Mark> findByStudentAndSubject(Student student,Subject subject);
+
+    @Query("SELECT m FROM Mark m WHERE m.student.cin = :studentCin AND m.subjectEvalType.subject.id = :subjectId")
+    List<Mark> findByStudentCinAndSubjectId(String studentCin,String subjectId );
 }

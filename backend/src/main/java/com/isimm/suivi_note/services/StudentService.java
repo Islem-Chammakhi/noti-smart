@@ -1,18 +1,19 @@
 package com.isimm.suivi_note.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.isimm.suivi_note.dto.AverageSubjectResponseDTO;
 import com.isimm.suivi_note.dto.EvaluationDTO;
 import com.isimm.suivi_note.dto.StudentDTO;
+import com.isimm.suivi_note.dto.StudentMarksBySubjectDTO;
 import com.isimm.suivi_note.dto.SubjectMarkResponseDTO;
 import com.isimm.suivi_note.dto.SubjectResponseDTO;
 import com.isimm.suivi_note.enums.Role;
 import com.isimm.suivi_note.models.AverageSubject;
 import com.isimm.suivi_note.models.Filiere;
+import com.isimm.suivi_note.models.Mark;
 import com.isimm.suivi_note.models.Student;
 import com.isimm.suivi_note.repositories.StudentRepo;
 
@@ -75,5 +76,39 @@ public class StudentService {
                         .subjectId(av.getSubject().getId())
                         .build())
                 .toList();
+    }
+
+    public List<StudentMarksBySubjectDTO> getStudentMarksBySubjectAndFiliere(String filiereId,String subjectId){
+        List<Student> students = studentRepo.findByFiliereId(filiereId);
+
+        return students.stream().map(student ->{
+            List<Mark> marks = markService.getMarksByStudentAndSubject(student.getCin(),subjectId);
+
+            Double ds = null, exam = null, oralOrTp = null;
+
+            for (Mark mark:marks){
+                String evalType = mark.getSubjectEvalType().getEvalType().getLabel().name();
+
+                switch (evalType) {
+                    case "DS":
+                        ds = mark.getMark();
+                        break;
+                    case "EXAM":
+                        exam = mark.getMark();
+                        break;
+                    case "ORAL":
+                    case "TP":
+                        oralOrTp = mark.getMark();
+                        break;
+                }    
+            }
+            return StudentMarksBySubjectDTO.builder()
+                    .studentCin(student.getCin())
+                    .studentName(student.getCin())
+                    .ds(ds)
+                    .oralOrTp(oralOrTp)
+                    .exam(exam)
+                    .build();
+        }).toList();
     }
 }
