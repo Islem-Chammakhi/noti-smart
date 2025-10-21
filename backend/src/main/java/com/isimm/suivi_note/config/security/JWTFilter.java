@@ -35,7 +35,7 @@ public class JWTFilter extends OncePerRequestFilter{
         }
         final String accessToken;
         final String userCin;
-        accessToken = jwtService.getTokenFromCookie(request,"accessToken");
+        accessToken = jwtService.getTextFromCookie(request,"accessToken");
         if(accessToken==null){
             filterChain.doFilter(request, response);
             return;

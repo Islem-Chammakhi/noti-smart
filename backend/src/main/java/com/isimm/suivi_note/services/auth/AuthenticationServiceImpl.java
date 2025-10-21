@@ -5,6 +5,7 @@ import com.isimm.suivi_note.dto.AuthOtpLoginReq;
 import com.isimm.suivi_note.dto.UserDTO;
 import com.isimm.suivi_note.services.EmailService;
 import com.isimm.suivi_note.utils.OtpGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +31,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService  {
@@ -69,19 +71,24 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
     }
 
     @Override
-    public AuthenticationResponse loginWithOTP(AuthOtpLoginReq request) {
+    public AuthenticationResponse loginWithOTP(String cin, String passwd, String otp) {
         try{
-            final Authentication auth = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.cin(), request.password()));
+            final Authentication auth = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(cin, passwd));
+            System.out.println("les données envoyés sont : "+cin+" "+passwd+" "+otp);
             User user = (User) auth.getPrincipal();
-            if(passwordEncoder.matches(request.otp(), user.getOtp()) && auth.isAuthenticated()){
+            log.debug("Authenticated user = "+auth.isAuthenticated());
+            if(passwordEncoder.matches(otp, user.getOtp()) && auth.isAuthenticated()){
+
                 final String accessToken = this.jwtService.generateAccessToken(user.getUsername());
                 final String refreshToken = this.jwtService.generateRefreshToken(user.getUsername());
                 System.out.println("accessToken is :"+accessToken);
                 final String tokenType="Bearer";
+                UserDTO loggedUser=extractUserFromToken(accessToken);
                 return AuthenticationResponse.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .tokenType(tokenType)
+                        .user(loggedUser)
                         .build();
             }
             return null;

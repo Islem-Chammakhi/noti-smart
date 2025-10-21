@@ -1,9 +1,12 @@
 "use client";
-
 import AuthForm from "@/components/AuthForm";
 import z from "zod";
+import myApi from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 const RegisterPage = () => {
+  const router = useRouter();
+
   const fields = [
     { name: "cin", placeholder: "CIN", type: "number" },
     { name: "password", placeholder: "Mot de passe", type: "password" },
@@ -35,13 +38,22 @@ const RegisterPage = () => {
       message: "Les mots de passe ne correspondent pas",
       path: ["confirmPassword"], // indique où afficher l'erreur
     });
-  const handleRegister = (data: {
+
+  const handleRegister = async (data: {
     cin: string;
     password: string;
     confirmPassword: string;
   }) => {
     console.log("Login data:", data);
-    // Ici tu peux appeler ton backend Spring Boot
+    try {
+      const response = await myApi.register(data);
+      if (response.status === 201) {
+        console.log("user created successfully !");
+        router.push("/login");
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

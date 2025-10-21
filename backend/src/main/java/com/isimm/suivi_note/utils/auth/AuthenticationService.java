@@ -9,7 +9,7 @@ import com.isimm.suivi_note.utils.auth.response.AuthenticationResponse;
 
 public interface AuthenticationService {
     boolean login(final AuthenticationRequest request);
-    AuthenticationResponse loginWithOTP(final AuthOtpLoginReq request);
+    AuthenticationResponse loginWithOTP(String cin, String passwd, String otp);
     void register(final RegistrationRequest request);
     AuthenticationResponse refreshToken(final RefreshRequest request);
 

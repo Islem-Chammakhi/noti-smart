@@ -1,7 +1,9 @@
 package com.isimm.suivi_note.controllers;
 
 import com.isimm.suivi_note.dto.AuthOtpLoginReq;
+import com.isimm.suivi_note.dto.OtpDTO;
 import com.isimm.suivi_note.dto.UserDTO;
+import com.isimm.suivi_note.utils.HttpCookieManager;
 import org.springframework.web.bind.annotation.*;
 
 import com.isimm.suivi_note.services.auth.JWTService;
@@ -30,15 +32,41 @@ public class AuthController {
 
     @PostMapping("/login")
     //TODO: Why does this returns cookie with refresh token
-    public ResponseEntity<String> login(@Valid @RequestBody final AuthenticationRequest req) {
-        boolean authResponse= this.authenticationService.login(req);
+    public ResponseEntity<String> login(@Valid @RequestBody final AuthenticationRequest req, HttpServletResponse res) {
+        boolean isAuthenticated= this.authenticationService.login(req);
+        if(isAuthenticated){
+            res.addCookie(
+                HttpCookieManager.generateCookie(
+                        "cin",
+                        req.getCin(),
+                        60*5,
+                        true
+                )
+            );
 
-        return ResponseEntity.ok("authentication was "+authResponse);
+            res.addCookie(
+                    HttpCookieManager.generateCookie(
+                            "passwd",
+                            req.getPassword(),
+                            60*5,
+                            true
+                    )
+            );
+        }
+
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/otp")
-    public ResponseEntity<Void> loginOTP(@Valid @RequestBody final AuthOtpLoginReq req, HttpServletResponse response) {
-        AuthenticationResponse authResponse= this.authenticationService.loginWithOTP(req);
+    public ResponseEntity<UserDTO> loginOTP(@Valid @RequestBody OtpDTO otp, HttpServletRequest req, HttpServletResponse response) {
+        String cin = jwtService.getTextFromCookie(req, "cin");
+        String passwd = jwtService.getTextFromCookie(req, "passwd");
+
+        System.out.println(cin+ " "+passwd+" "+otp.value());
+
+        AuthenticationResponse authResponse= this.authenticationService.loginWithOTP(cin, passwd, otp.value());
+
+
         Cookie accessTokenCookie = new Cookie("accessToken", authResponse.getAccessToken());
         accessTokenCookie.setHttpOnly(true);
         // accessTokenCookie.setSecure(true);   HTTPS
@@ -53,7 +81,8 @@ public class AuthController {
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
 
-        return ResponseEntity.ok().build();
+       
+        return ResponseEntity.ok(authResponse.getUser());
     }
 
     @PostMapping("/register")
@@ -64,7 +93,7 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<Void> refreshAccessToken(HttpServletRequest req,HttpServletResponse response) {
-        String refreshToken = jwtService.getTokenFromCookie(req,"refreshToken");
+        String refreshToken = jwtService.getTextFromCookie(req,"refreshToken");
         RefreshRequest refreshRequest = new RefreshRequest(refreshToken);
         AuthenticationResponse authResponse= this.authenticationService.refreshToken(refreshRequest);
         if(refreshToken==null){
@@ -83,7 +112,7 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<UserDTO> verifyUser(HttpServletRequest req){
-        String token = jwtService.getTokenFromCookie(req, "accessToken");
+        String token = jwtService.getTextFromCookie(req, "accessToken");
         UserDTO user = authenticationService.extractUserFromToken(token);
         return ResponseEntity.ok(user);
     }
