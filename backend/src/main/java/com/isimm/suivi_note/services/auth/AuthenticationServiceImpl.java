@@ -2,6 +2,7 @@ package com.isimm.suivi_note.services.auth;
 
 import com.isimm.suivi_note.brevo.entities.BrevoOTPTemplate;
 import com.isimm.suivi_note.dto.AuthOtpLoginReq;
+import com.isimm.suivi_note.dto.UserDTO;
 import com.isimm.suivi_note.services.EmailService;
 import com.isimm.suivi_note.utils.OtpGenerator;
 import org.springframework.http.HttpStatus;
@@ -128,6 +129,17 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
                                      .refreshToken(request.getRefreshToken())
                                      .tokenType(token_type)
                                      .build();
+    }
+
+    @Override
+    public UserDTO extractUserFromToken(String token) {
+        String cin = jwtService.extractUserCin(token);
+        User u = userRepository.findByCin(cin).orElseThrow(()->new EntityNotFoundException("User cin="+cin+" doens't exist"));
+        return new UserDTO(
+                u.getCin(),
+                u.getFirstName() +" "+ u.getLastName(),
+                u.getRole().name()
+        );
     }
 
     private void checkUserPasswords(String password, String confirmPassword) {

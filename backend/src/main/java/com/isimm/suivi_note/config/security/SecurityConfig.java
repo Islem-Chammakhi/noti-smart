@@ -1,7 +1,9 @@
 package com.isimm.suivi_note.config.security;
 
+import com.isimm.suivi_note.config.cors.CorsConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,10 +26,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception{
         return http
-                //.cors(Customizer.withDefaults()) // Added CorsConfig
+                .cors(Customizer.withDefaults()) // Added CorsConfig
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
-                    auth.requestMatchers("/api/auth/otp", "/api/auth/login","/api/auth/register","/api/auth/refresh","/api/userisimm/**").permitAll()
+                    auth.requestMatchers("/api/auth/**","/api/userisimm/**").permitAll()
                     .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                     .requestMatchers("/api/student/**").hasAuthority("ROLE_STUDENT")
                     .anyRequest().authenticated()

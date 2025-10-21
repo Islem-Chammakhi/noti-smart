@@ -1,6 +1,7 @@
 package com.isimm.suivi_note.utils.auth;
 
 import com.isimm.suivi_note.dto.AuthOtpLoginReq;
+import com.isimm.suivi_note.dto.UserDTO;
 import com.isimm.suivi_note.utils.auth.request.AuthenticationRequest;
 import com.isimm.suivi_note.utils.auth.request.RefreshRequest;
 import com.isimm.suivi_note.utils.auth.request.RegistrationRequest;
@@ -13,5 +14,6 @@ public interface AuthenticationService {
     void register(final RegistrationRequest request);
     AuthenticationResponse refreshToken(final RefreshRequest request);
 
+    UserDTO extractUserFromToken(String token);
 }
     
