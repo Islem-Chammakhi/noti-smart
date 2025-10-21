@@ -11,11 +11,11 @@ type Affectation={
     type: TypeIntervention
 }
 
+//TODO: make the role enum
 type User = {
     cin:string,
-    nom:string,
-    prenom: string,
-    email:string,
+    nom: string
+    role: string,
 }
 
 type Filliere = {
