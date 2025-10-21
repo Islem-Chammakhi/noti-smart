@@ -14,7 +14,6 @@ import com.isimm.suivi_note.models.Subject;
 import com.isimm.suivi_note.models.SubjectEvalType;
 import com.isimm.suivi_note.repositories.MarkRepo;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -79,5 +78,9 @@ public class MarkService {
         }).collect(Collectors.toList());
         return subjectMarkResponseDTOs;
 
+    }
+
+    public List<Mark> getMarksByStudentAndSubject(String studentCin,String subjectId){
+        return markRepo.findByStudentCinAndSubjectId(studentCin,subjectId);
     }
 }
