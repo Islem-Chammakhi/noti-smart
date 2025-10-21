@@ -94,10 +94,10 @@ public class JWTService {
         return generateAccessToken(userCin);
     }
 
-    public String getTokenFromCookie(HttpServletRequest request,String tokenType) {
+    public String getTextFromCookie(HttpServletRequest request, String text) {
     if (request.getCookies() != null) {
         for (Cookie cookie : request.getCookies()) {
-            if (tokenType.equals(cookie.getName())) {
+            if (text.equals(cookie.getName())) {
                 return cookie.getValue();
             }
         }
