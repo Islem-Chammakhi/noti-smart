@@ -1,5 +1,7 @@
+"use client";
 import { AppSideBar } from "@/components/AppSideBar";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { useAuth } from "@/hooks/useAuth";
 import { ChartSpline, PersonStanding, File } from "lucide-react";
 
 export default function AdminLayout({
@@ -7,6 +9,8 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { user } = useAuth();
+  if (user?.role !== "ADMIN") window.location.href = "/";
   const items = [
     {
       title: "Importer des notes",

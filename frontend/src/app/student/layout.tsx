@@ -1,5 +1,8 @@
+"use client";
+
 import { AppSideBar } from "@/components/AppSideBar";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { useAuth } from "@/hooks/useAuth";
 import { BookOpenCheck, ChartSpline } from "lucide-react";
 
 export default function StudentLayout({
@@ -7,6 +10,9 @@ export default function StudentLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { user } = useAuth();
+
+  if (user?.role !== "STUDENT") window.location.href = "/";
   const items = [
     {
       title: "Notes",
