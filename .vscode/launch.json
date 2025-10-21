@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-SuiviNoteApplication<suivi-note>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.isimm.suivi_note.SuiviNoteApplication",
+      "projectName": "suivi-note",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

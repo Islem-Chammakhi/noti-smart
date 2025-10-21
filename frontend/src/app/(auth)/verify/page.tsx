@@ -1,20 +1,30 @@
 "use client";
-
 import AuthForm from "@/components/AuthForm";
-import { useRouter } from "next/navigation";
 import z from "zod";
+import myApi from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
 
-// File intermidiare, ta3ml appel l deux fichiers fil page.tsx. Send
 const VerifyOtpPage = () => {
+  const { updateUser } = useAuth();
+
   const fields = [{ name: "otp", placeholder: "code otp ", type: "number" }];
 
   const otpSchema = z.object({
     otp: z.string().length(6, "Le code OTP doit contenir 6 chiffres."),
   });
-  const router = useRouter();
-  const handleSubmit = (data: { otp: string }) => {
-    console.log("otp data:", data);
-    router.push("/");
+  const handleSubmit = async (data: { otp: string }) => {
+    try {
+      const response = await myApi.loginWithOTP(data);
+      if (response.status === 200) {
+        console.log(
+          "login successfully moving to persist login !",
+          response.data
+        );
+        updateUser(response.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

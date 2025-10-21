@@ -58,7 +58,7 @@ public class AuthController {
     }
 
     @PostMapping("/otp")
-    public ResponseEntity<Void> loginOTP(@Valid @RequestBody OtpDTO otp, HttpServletRequest req, HttpServletResponse response) {
+    public ResponseEntity<UserDTO> loginOTP(@Valid @RequestBody OtpDTO otp, HttpServletRequest req, HttpServletResponse response) {
         String cin = jwtService.getTextFromCookie(req, "cin");
         String passwd = jwtService.getTextFromCookie(req, "passwd");
 
@@ -81,9 +81,8 @@ public class AuthController {
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
 
-        //TODO: Remove cin and passwd cookies
-
-        return ResponseEntity.ok().build();
+       
+        return ResponseEntity.ok(authResponse.getUser());
     }
 
     @PostMapping("/register")

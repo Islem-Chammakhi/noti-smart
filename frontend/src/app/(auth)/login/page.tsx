@@ -1,12 +1,12 @@
 "use client";
-
 import AuthForm from "@/components/AuthForm";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import myApi from "@/lib/api"
-
+import myApi from "@/lib/api";
 
 const LoginPage = () => {
+  const router = useRouter();
+
   const fields = [
     { name: "cin", placeholder: "CIN", type: "number" },
     { name: "password", placeholder: "Mot de passe", type: "password" },
@@ -28,16 +28,16 @@ const LoginPage = () => {
       ),
   });
 
-  const router = useRouter();
-  const handleLogin = (data: { cin: string; password: string }) => {
-    myApi.login(data).then(res=>{
-      if(res.status ==200){
+  const handleLogin = async (data: { cin: string; password: string }) => {
+    try {
+      const response = await myApi.login(data);
+      if (response.status === 200) {
+        console.log("credentials true moving to otp !");
         router.push("/verify");
-
       }
-    }).catch(e =>{
-      console.error("Error logging in", e)
-    })
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
