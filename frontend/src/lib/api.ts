@@ -36,5 +36,20 @@ class ApiService {
     const response = await axiosInstance.get<User>("/auth/me");
     return response.data;
   }
+
+  async getStudentMarksByFiliereAndSubject(
+    filiereId: string,
+    subjectId: string
+  ) {
+    const response = await axiosInstance.get(
+      `/admin/${filiereId}/${subjectId}/student_marks`
+    );
+    return response;
+  }
+
+  async getStudentMarks(studentCin: string) {
+    const response = await axiosInstance.get(`/student/${studentCin}/marks`);
+    return response;
+  }
 }
 export default new ApiService();

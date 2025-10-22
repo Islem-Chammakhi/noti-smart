@@ -3,6 +3,8 @@ import { AppSideBar } from "@/components/AppSideBar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { ChartSpline, PersonStanding, File } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function AdminLayout({
   children,
@@ -10,7 +12,13 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { user } = useAuth();
-  if (user?.role !== "ADMIN") window.location.href = "/";
+  const router = useRouter();
+  useEffect(() => {
+    if (user && user.role !== "ADMIN") {
+      console.log("vous n'étes autorisé !");
+      router.push("/login");
+    }
+  });
   const items = [
     {
       title: "Importer des notes",

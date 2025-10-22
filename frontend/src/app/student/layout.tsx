@@ -4,6 +4,8 @@ import { AppSideBar } from "@/components/AppSideBar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { BookOpenCheck, ChartSpline } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function StudentLayout({
   children,
@@ -11,8 +13,14 @@ export default function StudentLayout({
   children: React.ReactNode;
 }) {
   const { user } = useAuth();
-
-  if (user?.role !== "STUDENT") window.location.href = "/";
+  const router = useRouter();
+  useEffect(() => {
+    console.log(user?.role);
+    if (!user || user.role !== "STUDENT") {
+      console.log("vous n'étes pas autorisé !");
+      router.push("/login");
+    }
+  });
   const items = [
     {
       title: "Notes",

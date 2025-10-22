@@ -3,9 +3,11 @@ import AuthForm from "@/components/AuthForm";
 import z from "zod";
 import myApi from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 const VerifyOtpPage = () => {
   const { updateUser } = useAuth();
+  const router = useRouter();
 
   const fields = [{ name: "otp", placeholder: "code otp ", type: "number" }];
 
@@ -20,7 +22,9 @@ const VerifyOtpPage = () => {
           "login successfully moving to persist login !",
           response.data
         );
+        console.log(response.data);
         updateUser(response.data);
+        router.push("/student/marks");
       }
     } catch (err) {
       console.log(err);

@@ -60,3 +60,19 @@ type Note = {
   type: TypeEval;
   matiere: string /*It should be Matiere but due to time constraints, it's string*/;
 };
+
+type StudentMarks = {
+  studentCin: string;
+  studentName: string;
+  ds: number;
+  exam: number;
+  oralOrTp: number;
+};
+
+type StudentMarksPerSubject = {
+  subjectId: string;
+  subjectName: string;
+  ds: number;
+  exam: number;
+  oralOrTp: number;
+};

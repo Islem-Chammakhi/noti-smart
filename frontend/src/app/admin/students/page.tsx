@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Select,
@@ -9,40 +9,43 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import MarksTable from "@/components/MarksTable";
+import myApi from "@/lib/api";
+import { Loader2 } from "lucide-react";
 
 // --- Fake data pour le test ---
-const filieres = ["Informatique", "Génie Logiciel", "Réseaux"];
+const filieres = ["ING2_INFO"];
 const matieresParFiliere: Record<string, string[]> = {
-  Informatique: ["Algorithmique", "Systèmes", "Mathématiques"],
-  "Génie Logiciel": ["Programmation", "Base de Données", "UML"],
-  Réseaux: ["Sécurité", "Administration", "Télécom"],
+  ING2_INFO: ["397"],
 };
 
-const fakeGrades = [
-  {
-    id: 1,
-    firstName: "Ben Salah",
-    lastName: "Amine",
-    ds: 15.2,
-    tp: 10,
-  },
-  {
-    id: 2,
-    firstName: "Trabelsi",
-    lastName: "Sarra",
-    ds: 9.8,
-    tp: 10,
-  },
-  { id: 3, firstName: "Mansour", lastName: "Ali", ds: 12.5, tp: 10 },
-  { id: 4, firstName: "Gharbi", lastName: "Nour", ds: 7.3, tp: 10 },
-  { id: 5, firstName: "Khaled", lastName: "Rania", ds: 10.0, tp: 10 },
-];
-
-const columns = ["#", "firsName", "lastName", "DS", "TP", "EXAM"];
+const columns = ["cin", "nom & prénom", "ds", "tp/orale", "examen"];
 
 export default function SubjectGradesPage() {
   const [selectedFiliere, setSelectedFiliere] = useState<string>("");
   const [selectedMatiere, setSelectedMatiere] = useState<string>("");
+  const [data, setData] = useState<StudentMarks[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchMarks = async (filiereId: string, subjectId: string) => {
+    try {
+      setLoading(true);
+      const response = await myApi.getStudentMarksByFiliereAndSubject(
+        filiereId,
+        subjectId
+      );
+      if (response.status === 200) {
+        setData(response.data);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (selectedFiliere && selectedMatiere)
+      fetchMarks(selectedFiliere, selectedMatiere);
+  }, [selectedFiliere, selectedMatiere]);
 
   const matieres = selectedFiliere ? matieresParFiliere[selectedFiliere] : [];
 
@@ -94,13 +97,23 @@ export default function SubjectGradesPage() {
       </Card>
 
       {/* --- Tableau des notes --- */}
-      {selectedFiliere && selectedMatiere && (
-        <MarksTable
-          columns={columns}
-          title={`Notes des étudiants — ${selectedMatiere} (${selectedFiliere})`}
-          rows={fakeGrades}
-        />
-      )}
+      <div>
+        {loading ? (
+          <div className="flex justify-center py-8">
+            <Loader2 className="animate-spin w-6 h-6 text-blue-600" />
+          </div>
+        ) : data.length > 0 ? (
+          <MarksTable
+            columns={columns}
+            title={`Notes des étudiants — ${selectedMatiere} (${selectedFiliere})`}
+            rows={data}
+          />
+        ) : (
+          <p className="text-center text-gray-500 py-6">
+            Aucune donnée à afficher
+          </p>
+        )}
+      </div>
     </div>
   );
 }

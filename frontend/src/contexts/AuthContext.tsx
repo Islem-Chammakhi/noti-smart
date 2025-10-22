@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const response = await myApi.verifyAuth();
         setUser(response);
-        router.push(`/${user?.role.toLowerCase()}/stats`);
+        // router.push(`/${user?.role.toLowerCase()}/stats`);
       } catch {
         setUser(null);
       } finally {
