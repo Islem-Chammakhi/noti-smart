@@ -19,6 +19,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Collections;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -33,56 +35,69 @@ public class AuthController {
     @PostMapping("/login")
     //TODO: Why does this returns cookie with refresh token
     public ResponseEntity<String> login(@Valid @RequestBody final AuthenticationRequest req, HttpServletResponse res) {
-        boolean isAuthenticated= this.authenticationService.login(req);
-        if(isAuthenticated){
-            res.addCookie(
-                HttpCookieManager.generateCookie(
-                        "cin",
-                        req.getCin(),
-                        60*5,
-                        true
-                )
-            );
+        try {
+            boolean isAuthenticated = this.authenticationService.login(req);
+            if (isAuthenticated) {
+                res.addCookie(
+                        HttpCookieManager.generateCookie(
+                                "cin",
+                                req.getCin(),
+                                60 * 5,
+                                true
+                        )
+                );
 
-            res.addCookie(
-                    HttpCookieManager.generateCookie(
-                            "passwd",
-                            req.getPassword(),
-                            60*5,
-                            true
-                    )
-            );
+                res.addCookie(
+                        HttpCookieManager.generateCookie(
+                                "passwd",
+                                req.getPassword(),
+                                60 * 5,
+                                true
+                        )
+                );
+                return ResponseEntity.status(HttpStatus.ACCEPTED)
+                        .body("");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Données invalide !");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur Serveur");
         }
-
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/otp")
     public ResponseEntity<UserDTO> loginOTP(@Valid @RequestBody OtpDTO otp, HttpServletRequest req, HttpServletResponse response) {
-        String cin = jwtService.getTextFromCookie(req, "cin");
-        String passwd = jwtService.getTextFromCookie(req, "passwd");
+        try{
+            String cin = jwtService.getTextFromCookie(req, "cin");
+            String passwd = jwtService.getTextFromCookie(req, "passwd");
 
-        System.out.println(cin+ " "+passwd+" "+otp.value());
+            System.out.println(cin+ " "+passwd+" "+otp.value());
 
-        AuthenticationResponse authResponse= this.authenticationService.loginWithOTP(cin, passwd, otp.value());
+            AuthenticationResponse authResponse= this.authenticationService.loginWithOTP(cin, passwd, otp.value());
 
 
-        Cookie accessTokenCookie = new Cookie("accessToken", authResponse.getAccessToken());
-        accessTokenCookie.setHttpOnly(true);
-        // accessTokenCookie.setSecure(true);   HTTPS
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(15*60);
+            Cookie accessTokenCookie = new Cookie("accessToken", authResponse.getAccessToken());
+            accessTokenCookie.setHttpOnly(true);
+            // accessTokenCookie.setSecure(true);   HTTPS
+            accessTokenCookie.setPath("/");
+            accessTokenCookie.setMaxAge(15*60);
 
-        Cookie refreshTokenCookie = new Cookie("refreshToken", authResponse.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        // refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
+            Cookie refreshTokenCookie = new Cookie("refreshToken", authResponse.getRefreshToken());
+            refreshTokenCookie.setHttpOnly(true);
+            // refreshTokenCookie.setSecure(true);
+            refreshTokenCookie.setPath("/");
+            refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+            response.addCookie(accessTokenCookie);
+            response.addCookie(refreshTokenCookie);
 
-       
-        return ResponseEntity.ok(authResponse.getUser());
+        
+            return ResponseEntity.ok(authResponse.getUser());
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(UserDTO.builder().build());
+        }
     }
 
     @PostMapping("/register")

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import myApi from "@/lib/api";
 import { useState } from "react";
-import { Loader } from "lucide-react";
+import Loader from "@/components/Loader";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -34,8 +34,9 @@ const LoginPage = () => {
   const handleLogin = async (data: { cin: string; password: string }) => {
     try {
       setLoading(true);
+      // await new Promise((resolver) => setTimeout(resolver, 5000));
       const response = await myApi.login(data);
-      if (response.status === 200) {
+      if (response.status === 202) {
         console.log("credentials true moving to otp !");
         router.push("/verify");
       }
@@ -54,7 +55,7 @@ const LoginPage = () => {
         onSubmit={handleLogin}
         schema={loginSchema}
         buttonText="Se connecter"
-        extra="Je n'ai pas de compte"
+        extra="Vous n'avez pas de compte ?"
         path="/register"
       />
     </>

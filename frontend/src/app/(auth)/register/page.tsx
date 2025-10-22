@@ -3,10 +3,12 @@ import AuthForm from "@/components/AuthForm";
 import z from "zod";
 import myApi from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Loader from "@/components/Loader";
 
 const RegisterPage = () => {
   const router = useRouter();
-
+  const [loading, setLoading] = useState(false);
   const fields = [
     { name: "cin", placeholder: "CIN", type: "number" },
     { name: "password", placeholder: "Mot de passe", type: "password" },
@@ -46,6 +48,7 @@ const RegisterPage = () => {
   }) => {
     console.log("Login data:", data);
     try {
+      setLoading(true);
       const response = await myApi.register(data);
       if (response.status === 201) {
         console.log("user created successfully !");
@@ -53,18 +56,23 @@ const RegisterPage = () => {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <AuthForm
-      fields={fields}
-      onSubmit={handleRegister}
-      schema={registerSchema}
-      buttonText="Créer compte"
-      extra="Vous avez déja un compte"
-      path="/login"
-    />
+    <>
+      {loading && <Loader />}
+      <AuthForm
+        fields={fields}
+        onSubmit={handleRegister}
+        schema={registerSchema}
+        buttonText="Créer compte"
+        extra="Vous avez déja un compte ?"
+        path="/login"
+      />
+    </>
   );
 };
 

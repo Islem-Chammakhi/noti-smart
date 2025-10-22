@@ -4,11 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.isimm.suivi_note.dto.SubjectAverageStatsDTO;
+import com.isimm.suivi_note.dto.SubjectGeneralAverageDTO;
 import com.isimm.suivi_note.models.AverageSubject;
 import com.isimm.suivi_note.models.Student;
 import com.isimm.suivi_note.models.Subject;
 import com.isimm.suivi_note.repositories.AverageSubjectRepo;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class AverageSubjectService {
 
     private final AverageSubjectRepo averageSubjectRepo;
+
 
     public List<AverageSubject> getAverageSubjectsByStudent(Student student){
         return averageSubjectRepo.findByStudent(student).orElseThrow(()-> new RuntimeException("averages not prepared yet !"));
@@ -28,5 +30,13 @@ public class AverageSubjectService {
                                          .subject(subject)
                                          .build();
         averageSubjectRepo.save(av);
+    }
+
+    public List<SubjectGeneralAverageDTO> getGeneralAveragesByFiliere(String filiereId) {
+        return averageSubjectRepo.findGeneralAveragePerSubjectByFiliere(filiereId);
+    }
+
+    public List<SubjectAverageStatsDTO> getAverageStatsByFiliere(String filiereId) {
+        return averageSubjectRepo.findAverageStatsPerSubjectByFiliere(filiereId);
     }
 }

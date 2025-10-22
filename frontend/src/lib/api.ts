@@ -51,5 +51,19 @@ class ApiService {
     const response = await axiosInstance.get(`/student/${studentCin}/marks`);
     return response;
   }
+
+  async getSubjectGeneralAverage(filiereId: string) {
+    const response = await axiosInstance.get(
+      `/admin/${filiereId}/subjects_marks`
+    );
+    return response;
+  }
+
+  async getSubjectAverageStats(filiereId: string) {
+    const response = await axiosInstance.get(
+      `/admin/${filiereId}/average_stats`
+    );
+    return response;
+  }
 }
 export default new ApiService();

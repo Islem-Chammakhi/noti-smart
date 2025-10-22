@@ -47,14 +47,14 @@ const MarksTable = ({ columns, rows, title }: TableProps) => {
                     <TableCell>{e.subjectId}</TableCell>
                     <TableCell>{e.subjectName}</TableCell>
                     <TableCell>
-                      {e.ds !== undefined && (
+                      {e.ds && (
                         <Badge variant={e.ds >= 10 ? "default" : "destructive"}>
                           {e.ds.toFixed(1)}
                         </Badge>
                       )}
                     </TableCell>
                     <TableCell>
-                      {e.oralOrTp !== undefined && (
+                      {e.oralOrTp && (
                         <Badge
                           variant={e.oralOrTp >= 10 ? "default" : "destructive"}
                         >
@@ -79,14 +79,14 @@ const MarksTable = ({ columns, rows, title }: TableProps) => {
                     <TableCell>{e.studentCin}</TableCell>
                     <TableCell>{e.studentName}</TableCell>
                     <TableCell>
-                      {e.ds !== undefined && (
+                      {e.ds && (
                         <Badge variant={e.ds >= 10 ? "default" : "destructive"}>
                           {e.ds.toFixed(1)}
                         </Badge>
                       )}
                     </TableCell>
                     <TableCell>
-                      {e.oralOrTp !== undefined && (
+                      {e.oralOrTp && (
                         <Badge
                           variant={e.oralOrTp >= 10 ? "default" : "destructive"}
                         >
@@ -95,7 +95,7 @@ const MarksTable = ({ columns, rows, title }: TableProps) => {
                       )}
                     </TableCell>
                     <TableCell>
-                      {e.exam !== undefined && (
+                      {e.exam && (
                         <Badge
                           variant={e.exam >= 10 ? "default" : "destructive"}
                         >

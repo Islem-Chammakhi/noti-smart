@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import MarksTable from "@/components/MarksTable";
 import myApi from "@/lib/api";
-import { Loader2 } from "lucide-react";
+import Loader from "@/components/Loader";
 
 // --- Fake data pour le test ---
 const filieres = ["ING2_INFO"];
@@ -99,9 +99,7 @@ export default function SubjectGradesPage() {
       {/* --- Tableau des notes --- */}
       <div>
         {loading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="animate-spin w-6 h-6 text-blue-600" />
-          </div>
+          <Loader />
         ) : data.length > 0 ? (
           <MarksTable
             columns={columns}

@@ -12,7 +12,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Progress } from "./ui/progress";
-import axios from "axios";
+import { axiosFileInstance } from "@/lib/axios-config";
 
 type FileWithProgress = {
   id: string;
@@ -24,6 +24,7 @@ type FileWithProgress = {
 const FileUpload = () => {
   const [files, setFiles] = useState<FileWithProgress[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [msg, setMsg] = useState("");
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -60,31 +61,43 @@ const FileUpload = () => {
     if (files.length === 0 || uploading) return;
 
     setUploading(true);
-
+    setMsg("");
     const uploadPromises = files.map(async (fileWithProgress) => {
       const formData = new FormData();
       formData.append("file", fileWithProgress.file);
 
       try {
-        await axios.post("https://httpbin.org/post", formData, {
-          onUploadProgress: (progressEvent) => {
-            const progress =
-              Math.round(progressEvent.loaded * 100) /
-              (progressEvent.total || 1);
-            setFiles((prevFiles) =>
-              prevFiles.map((file) =>
-                file.id === fileWithProgress.id ? { ...file, progress } : file
-              )
-            );
-          },
-        });
-        setFiles((prevFiles) =>
-          prevFiles.map((file) =>
-            file.id === fileWithProgress.id ? { ...file, uploaded: true } : file
-          )
+        const response = await axiosFileInstance.post(
+          "/admin/upload_marks",
+          formData,
+          {
+            onUploadProgress: (progressEvent) => {
+              const progress =
+                Math.round(progressEvent.loaded * 100) /
+                (progressEvent.total || 1);
+              setFiles((prevFiles) =>
+                prevFiles.map((file) =>
+                  file.id === fileWithProgress.id ? { ...file, progress } : file
+                )
+              );
+            },
+          }
         );
-      } catch (error) {
+        if (response.status === 200) {
+          console.log(response.data);
+          setFiles((prevFiles) =>
+            prevFiles.map((file) =>
+              file.id === fileWithProgress.id
+                ? { ...file, uploaded: true }
+                : file
+            )
+          );
+        } else {
+          setMsg(response.data);
+        }
+      } catch (error: any) {
         console.log(error);
+        setMsg(error?.message || String(error));
       }
     });
     await Promise.all(uploadPromises); // run promises at the same time !
@@ -130,6 +143,7 @@ const FileUpload = () => {
           </div>
         </div>
       )}
+      <span className="text-red-800 text-sm font-semibold">{msg}</span>
     </div>
   );
 };

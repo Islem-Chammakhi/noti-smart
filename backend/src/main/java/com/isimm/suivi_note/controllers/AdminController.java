@@ -17,10 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.isimm.suivi_note.dto.StudentDTO;
 import com.isimm.suivi_note.dto.StudentMarksBySubjectDTO;
+import com.isimm.suivi_note.dto.SubjectAverageStatsDTO;
+import com.isimm.suivi_note.dto.SubjectGeneralAverageDTO;
 import com.isimm.suivi_note.models.Admin;
 
 import com.isimm.suivi_note.repositories.AdminRepo;
 import com.isimm.suivi_note.services.auth.AdminService;
+import com.isimm.suivi_note.services.AverageSubjectService;
 import com.isimm.suivi_note.services.ExcelImportService;
 import com.isimm.suivi_note.services.StudentService;
 
@@ -36,6 +39,7 @@ public class AdminController {
     private final AdminRepo adminRepo;
     private final ExcelImportService excelImportService;
     private final StudentService studentService;
+    private final AverageSubjectService averageSubjectService;
      @PostMapping("/")
     public ResponseEntity<Admin> addStudent(@Valid @RequestBody StudentDTO dto) {
         
@@ -73,6 +77,34 @@ public class AdminController {
                     .body(Collections.emptyList());
         }
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/{filiereId}/subjects_marks")
+    public ResponseEntity<List<SubjectGeneralAverageDTO>> getGeneralAveragesByFiliere(@PathVariable String filiereId) {
+        try {
+            List<SubjectGeneralAverageDTO> result=averageSubjectService.getGeneralAveragesByFiliere(filiereId);
+            
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.emptyList());
+        }
+    }
+
+        @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/{filiereId}/average_stats")
+    public ResponseEntity<List<SubjectAverageStatsDTO>> getAverageStatsByFiliere(@PathVariable String filiereId) {
+        try {
+            List<SubjectAverageStatsDTO> stats = averageSubjectService.getAverageStatsByFiliere(filiereId);
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.emptyList());
+        }
+    }
+
     
     
 }

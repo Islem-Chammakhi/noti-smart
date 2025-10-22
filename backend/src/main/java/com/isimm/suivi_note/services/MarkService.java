@@ -37,10 +37,12 @@ public class MarkService {
     }
 
     private void calculateAndSaveAverageIfComplete(Mark mark){
-        Student student = mark.getStudent();
+        Student student =(Student) mark.getStudent();
+        System.out.println("étudaint est : "+student);
+        System.out.println("---------------------------");
         Subject subject = mark.getSubjectEvalType().getSubject(); 
 
-        List<Mark> marks= markRepo.findByStudentAndSubject(student, subject);
+        List<Mark> marks= markRepo.findByStudentCinAndSubjectId(student.getCin(), subject.getId());
 
         if (marks.size()==3){
             double average = 0;

@@ -1,24 +1,21 @@
 "use client";
 import { AppSideBar } from "@/components/AppSideBar";
+import Loader from "@/components/Loader";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { ChartSpline, PersonStanding, File } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
-  useEffect(() => {
-    if (user && user.role !== "ADMIN") {
-      console.log("vous n'étes autorisé !");
-      router.push("/login");
-    }
-  });
+
+  if (loading) return <Loader />;
+  if ((!loading && !user) || user?.role !== "ADMIN") router.push("/login");
   const items = [
     {
       title: "Importer des notes",

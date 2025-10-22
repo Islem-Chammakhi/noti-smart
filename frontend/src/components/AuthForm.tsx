@@ -33,19 +33,13 @@ const AuthForm = ({
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
-    setError,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
 
-  const submitHandler = async (data: z.infer<typeof schema>) => {
-    try {
-      console.log("Formulaire soumis :", data);
-      onSubmit(data);
-    } catch (err) {
-      console.log(err);
-    } finally {
-    }
+  const submitHandler = (data: z.infer<typeof schema>) => {
+    console.log("Formulaire soumis :", data);
+    onSubmit(data);
   };
 
   return (

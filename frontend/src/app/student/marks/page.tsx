@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import MarksTable from "@/components/MarksTable";
 import myApi from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2 } from "lucide-react";
+import Loader from "@/components/Loader";
 
 const columns = ["#", "matiére", "DS", "TP/ORALE", "EXAM"];
 
@@ -37,9 +37,7 @@ export default function SubjectGradesPage() {
       {/* --- Tableau des notes --- */}
       <div>
         {loading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="animate-spin w-6 h-6 text-blue-600" />
-          </div>
+          <Loader />
         ) : data.length > 0 ? (
           <MarksTable
             columns={columns}

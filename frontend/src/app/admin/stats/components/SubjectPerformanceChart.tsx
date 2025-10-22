@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   BarChart,
@@ -12,8 +11,13 @@ import {
   Legend,
 } from "recharts";
 
-export default function SubjectPerformanceChart() {
-  const [data, setData] = useState([]);
+interface SubjectPerformanceChartProps {
+  data: SubjectAverageStats[];
+}
+
+export default function SubjectPerformanceChart({
+  data,
+}: SubjectPerformanceChartProps) {
   const fakeStats = [
     { name: "Algorithmique", passed: 40, unpassed: 28 },
     { name: "Compilation", passed: 58, unpassed: 18 },
@@ -41,7 +45,7 @@ export default function SubjectPerformanceChart() {
 
   return (
     <div className="">
-      {fakeStats && (
+      {data.length > 0 && (
         <Card className="shadow-md border border-indigo-100 p-6">
           <CardHeader>
             <CardTitle className="text-lg">
@@ -57,7 +61,7 @@ export default function SubjectPerformanceChart() {
                   aspectRatio: 1.618,
                 }}
                 responsive
-                data={fakeStats}
+                data={data}
                 margin={{
                   top: 5,
                   right: 0,
