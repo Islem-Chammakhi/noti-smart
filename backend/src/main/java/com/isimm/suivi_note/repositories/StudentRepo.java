@@ -9,7 +9,7 @@ import com.isimm.suivi_note.models.Student;
 
 
 public interface StudentRepo extends JpaRepository<Student,String> {
-    Optional<Student>  findByCin (String cin);
+    Student  findByCin (String cin);
 
     List<Student> findByFiliereId(String filiereId);
 }

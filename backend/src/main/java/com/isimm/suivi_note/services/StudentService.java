@@ -44,7 +44,7 @@ public class StudentService {
     }
 
     public Student getStudentByCin(String cin) {
-        return studentRepo.findByCin(cin).orElseThrow(()-> new RuntimeException("student with cin "+cin+" not found !"));
+        return studentRepo.findByCin(cin);
     }
 
     public List<SubjectResponseDTO> getSubjectsByStudent(String studentCin) {
@@ -117,8 +117,7 @@ public class StudentService {
     }
 
     public List<SubjectMarksDTO> getAllMarksByStudent(String studentCin) {
-    Student student = studentRepo.findByCin(studentCin)
-            .orElseThrow(() -> new RuntimeException("Étudiant non trouvé"));
+    Student student = studentRepo.findByCin(studentCin);
 
     // On récupère toutes les matières de la filière de cet étudiant
     List<Subject> subjects = subjectRepo.findByFiliereId(student.getFiliere().getId());

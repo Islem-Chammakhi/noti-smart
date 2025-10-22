@@ -18,31 +18,6 @@ interface SubjectPerformanceChartProps {
 export default function SubjectPerformanceChart({
   data,
 }: SubjectPerformanceChartProps) {
-  const fakeStats = [
-    { name: "Algorithmique", passed: 40, unpassed: 28 },
-    { name: "Compilation", passed: 58, unpassed: 18 },
-    { name: "Systèmes d’exploitation", passed: 11, unpassed: 57 },
-    { name: "Base de données", passed: 58, unpassed: 10 },
-    { name: "Programmation Web", passed: 16, unpassed: 52 },
-
-    { name: "UML", passed: 13, unpassed: 55 },
-    { name: "Génie logiciel", passed: 50, unpassed: 18 },
-    { name: "Gestion de projet", passed: 60, unpassed: 8 },
-    { name: "Test logiciel", passed: 63, unpassed: 5 },
-    { name: "Développement mobile", passed: 65, unpassed: 3 },
-
-    { name: "Réseaux 1", passed: 58, unpassed: 10 },
-  ];
-
-  //   useEffect(() => {
-  //     if (!filiere) return;
-  //     // Exemple de requête vers ton backend
-  //     fetch(`/api/stats/moyennes?filiere=${filiere}`)
-  //       .then(res => res.json())
-  //       .then(setData)
-  //       .catch(err => console.error(err));
-  //   }, [filiere]);
-
   return (
     <div className="">
       {data.length > 0 && (
@@ -71,7 +46,7 @@ export default function SubjectPerformanceChart({
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
-                  dataKey="name"
+                  dataKey="subjectName"
                   interval={0}
                   angle={-50}
                   textAnchor="end"
