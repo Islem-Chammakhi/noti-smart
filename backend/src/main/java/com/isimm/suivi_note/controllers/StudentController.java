@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.isimm.suivi_note.dto.AverageSubjectResponseDTO;
 import com.isimm.suivi_note.dto.StudentDTO;
 import com.isimm.suivi_note.dto.SubjectMarkResponseDTO;
+import com.isimm.suivi_note.dto.SubjectMarksDTO;
 import com.isimm.suivi_note.dto.SubjectResponseDTO;
 import com.isimm.suivi_note.models.Student;
 import com.isimm.suivi_note.repositories.StudentRepo;
@@ -33,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -71,10 +71,11 @@ public class StudentController {
     }
 
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    @GetMapping("/{cin}/marks")
-    public ResponseEntity<List<SubjectMarkResponseDTO>> getMethodName(@PathVariable String cin) {
-                try{
-            return ResponseEntity.ok(studentService.getMarks(cin));
+    @GetMapping("/{studentCin}/marks")
+    public ResponseEntity<List<SubjectMarksDTO>> getStudentMarks(@PathVariable String studentCin) {
+        try{
+            List<SubjectMarksDTO> result = studentService.getAllMarksByStudent(studentCin);
+            return ResponseEntity.ok(result);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Collections.emptyList());
@@ -91,4 +92,5 @@ public class StudentController {
                     .body(Collections.emptyList());
         }
     }
+        
 }

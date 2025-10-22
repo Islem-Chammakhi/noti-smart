@@ -74,7 +74,7 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
     public AuthenticationResponse loginWithOTP(String cin, String passwd, String otp) {
         try{
             final Authentication auth = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(cin, passwd));
-
+            System.out.println("les données envoyés sont : "+cin+" "+passwd+" "+otp);
             User user = (User) auth.getPrincipal();
             log.debug("Authenticated user = "+auth.isAuthenticated());
             if(passwordEncoder.matches(otp, user.getOtp()) && auth.isAuthenticated()){
@@ -83,10 +83,12 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
                 final String refreshToken = this.jwtService.generateRefreshToken(user.getUsername());
                 System.out.println("accessToken is :"+accessToken);
                 final String tokenType="Bearer";
+                UserDTO loggedUser=extractUserFromToken(accessToken);
                 return AuthenticationResponse.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .tokenType(tokenType)
+                        .user(loggedUser)
                         .build();
             }
             return null;

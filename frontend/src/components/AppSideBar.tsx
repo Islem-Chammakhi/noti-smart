@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { LogOut, LucideProps } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -14,35 +14,17 @@ import {
 } from "./ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
+import { ForwardRefExoticComponent, RefAttributes } from "react";
 
-const items = [
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-];
-export const AppSideBar = () => {
+type AppSideBarProps = {
+  title: string;
+  url: string;
+  icon: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
+};
+
+export const AppSideBar = ({ items }: { items: AppSideBarProps[] }) => {
   return (
     <Sidebar>
       <SidebarHeader>
@@ -65,7 +47,7 @@ export const AppSideBar = () => {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Services</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -87,6 +69,7 @@ export const AppSideBar = () => {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/login">
+                <LogOut />
                 <span>Se déconnecter</span>
               </Link>
             </SidebarMenuButton>

@@ -39,9 +39,13 @@ const AuthForm = ({
   });
 
   const submitHandler = async (data: z.infer<typeof schema>) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("Formulaire soumis :", data);
-    onSubmit(data);
+    try {
+      console.log("Formulaire soumis :", data);
+      onSubmit(data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+    }
   };
 
   return (

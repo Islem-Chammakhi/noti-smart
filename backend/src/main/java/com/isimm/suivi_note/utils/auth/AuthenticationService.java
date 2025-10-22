@@ -6,7 +6,6 @@ import com.isimm.suivi_note.utils.auth.request.AuthenticationRequest;
 import com.isimm.suivi_note.utils.auth.request.RefreshRequest;
 import com.isimm.suivi_note.utils.auth.request.RegistrationRequest;
 import com.isimm.suivi_note.utils.auth.response.AuthenticationResponse;
-import org.springframework.http.ResponseEntity;
 
 public interface AuthenticationService {
     boolean login(final AuthenticationRequest request);

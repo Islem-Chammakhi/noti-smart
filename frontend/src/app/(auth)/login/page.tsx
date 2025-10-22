@@ -1,12 +1,15 @@
 "use client";
-
 import AuthForm from "@/components/AuthForm";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import myApi from "@/lib/api"
-
+import myApi from "@/lib/api";
+import { useState } from "react";
+import { Loader } from "lucide-react";
 
 const LoginPage = () => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
   const fields = [
     { name: "cin", placeholder: "CIN", type: "number" },
     { name: "password", placeholder: "Mot de passe", type: "password" },
@@ -28,27 +31,33 @@ const LoginPage = () => {
       ),
   });
 
-  const router = useRouter();
-  const handleLogin = (data: { cin: string; password: string }) => {
-    myApi.login(data).then(res=>{
-      if(res.status ==200){
+  const handleLogin = async (data: { cin: string; password: string }) => {
+    try {
+      setLoading(true);
+      const response = await myApi.login(data);
+      if (response.status === 200) {
+        console.log("credentials true moving to otp !");
         router.push("/verify");
-
       }
-    }).catch(e =>{
-      console.error("Error logging in", e)
-    })
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <AuthForm
-      fields={fields}
-      onSubmit={handleLogin}
-      schema={loginSchema}
-      buttonText="Se connecter"
-      extra="Je n'ai pas de compte"
-      path="/register"
-    />
+    <>
+      {loading && <Loader />}
+      <AuthForm
+        fields={fields}
+        onSubmit={handleLogin}
+        schema={loginSchema}
+        buttonText="Se connecter"
+        extra="Je n'ai pas de compte"
+        path="/register"
+      />
+    </>
   );
 };
 

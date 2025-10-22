@@ -13,10 +13,8 @@ import sendinblue.Configuration;
 import sendinblue.auth.ApiKeyAuth;
 import sibApi.TransactionalEmailsApi;
 import sibModel.SendSmtpEmail;
-import sibModel.SendSmtpEmailSender;
 import sibModel.SendSmtpEmailTo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

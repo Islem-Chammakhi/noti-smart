@@ -1,12 +1,13 @@
 "use client";
+
 import { AppSideBar } from "@/components/AppSideBar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
-import { ChartSpline, PersonStanding, File } from "lucide-react";
+import { BookOpenCheck, ChartSpline } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function AdminLayout({
+export default function StudentLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -14,25 +15,21 @@ export default function AdminLayout({
   const { user } = useAuth();
   const router = useRouter();
   useEffect(() => {
-    if (user && user.role !== "ADMIN") {
-      console.log("vous n'étes autorisé !");
+    console.log(user?.role);
+    if (!user || user.role !== "STUDENT") {
+      console.log("vous n'étes pas autorisé !");
       router.push("/login");
     }
   });
   const items = [
     {
-      title: "Importer des notes",
-      url: "/admin/upload",
-      icon: File,
+      title: "Notes",
+      url: "/student/marks",
+      icon: BookOpenCheck,
     },
     {
-      title: "Note des étudiants",
-      url: "/admin/students",
-      icon: PersonStanding,
-    },
-    {
-      title: "Statistique",
-      url: "/admin/stats/filiere",
+      title: "Statistiques",
+      url: "/student/stats",
       icon: ChartSpline,
     },
   ];
