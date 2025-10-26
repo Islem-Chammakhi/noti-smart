@@ -22,16 +22,12 @@ const VerifyOtpPage = () => {
       setLoading(true);
       const response = await myApi.loginWithOTP(data);
       if (response.status === 200) {
-        console.log(
-          "login successfully moving to persist login !",
-          response.data
-        );
         console.log(response.data);
         updateUser(response.data);
         const { role } = response.data;
         role === "ADMIN"
           ? router.push("/admin/upload")
-          : router.push("/STUDENT/marks");
+          : router.push("/student/marks");
       }
     } catch (err) {
       console.log(err);
@@ -44,11 +40,13 @@ const VerifyOtpPage = () => {
     <>
       {loading && <Loader />}
       <AuthForm
+        title="Vérification"
         fields={fields}
         onSubmit={handleSubmit}
         schema={otpSchema}
         buttonText="Vérifier"
         extra="merci de consulter le code envoyé par email"
+        type="otp"
       />
     </>
   );

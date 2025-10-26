@@ -12,7 +12,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Progress } from "./ui/progress";
-import { axiosFileInstance } from "@/lib/axios-config";
+import { axiosInstance } from "@/lib/axios-config";
 
 type FileWithProgress = {
   id: string;
@@ -67,9 +67,10 @@ const FileUpload = () => {
       formData.append("file", fileWithProgress.file);
 
       try {
-        const response = await axiosFileInstance.post(
+        const response = await axiosInstance.post(
           "/admin/upload_marks",
           formData,
+
           {
             onUploadProgress: (progressEvent) => {
               const progress =
@@ -80,6 +81,9 @@ const FileUpload = () => {
                   file.id === fileWithProgress.id ? { ...file, progress } : file
                 )
               );
+            },
+            headers: {
+              "Content-Type": "multipart/form-data",
             },
           }
         );

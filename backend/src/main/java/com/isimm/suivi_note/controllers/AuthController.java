@@ -19,7 +19,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Collections;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -107,13 +106,25 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<Void> refreshAccessToken(HttpServletRequest req,HttpServletResponse response) {
+    public ResponseEntity<String> refreshAccessToken(HttpServletRequest req,HttpServletResponse response) {
         String refreshToken = jwtService.getTextFromCookie(req,"refreshToken");
         RefreshRequest refreshRequest = new RefreshRequest(refreshToken);
-        AuthenticationResponse authResponse= this.authenticationService.refreshToken(refreshRequest);
-        if(refreshToken==null){
-            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("le refresh token est null !");
         }
+        String userCin;
+        try {
+            userCin = jwtService.extractUserCin(refreshToken);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("le refresh token est expiré 1 !");
+        }
+        AuthenticationResponse authResponse;
+                try {
+            authResponse= this.authenticationService.refreshToken(refreshRequest);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("le refresh token est expiré 2 !");
+        }
+
         Cookie accessTokenCookie = new Cookie("accessToken", authResponse.getAccessToken());
         accessTokenCookie.setHttpOnly(true);     
         // accessTokenCookie.setSecure(true);   HTTPS
@@ -122,7 +133,7 @@ public class AuthController {
 
         response.addCookie(accessTokenCookie);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("access token est génére avec success");
     }
 
     @GetMapping("/me")
