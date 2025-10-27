@@ -11,9 +11,9 @@ import java.util.Optional;
 
 
 public interface MoyenneMatiereRepo extends JpaRepository<MoyenneMatiere,Long> {
-    Optional<List<MoyenneMatiere>> findByStudent(Etudiant etudiant);
+    Optional<List<MoyenneMatiere>> findByEtudiant(Etudiant etudiant);
 
-    Optional<MoyenneMatiere>  findByStudentAndSubject(Etudiant etudiant, Matiere matiere);
+    Optional<MoyenneMatiere> findByEtudiantAndMatiere(Etudiant etudiant, Matiere matiere);
 
 
 }

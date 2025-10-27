@@ -18,7 +18,7 @@ public class MoyenneMatiereService {
     private final MoyenneMatiereRepo moyenneMatiereRepo;
 
     public List<MoyenneMatiere> getAverageSubjectsByStudent(Etudiant etudiant){
-        return moyenneMatiereRepo.findByStudent(etudiant).orElseThrow(()-> new RuntimeException("averages not prepared yet !"));
+        return moyenneMatiereRepo.findByEtudiant(etudiant).orElseThrow(()-> new RuntimeException("averages not prepared yet !"));
     }
 
     public MoyenneMatiere addAverage(Etudiant etudiant, Matiere matiere, double average){
