@@ -2,16 +2,7 @@ package com.isimm.suivi_note.models;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -52,7 +43,11 @@ public class Note {
     private TypeEvaluation typeEvaluation;
 
     @ManyToOne
-    @JoinColumn(name = "matiere_id")
+    @JoinColumns({
+            @JoinColumn(name = "matiere_id"),
+            @JoinColumn(name = "ue_id"),
+            @JoinColumn(name = "filiere_id")
+    })
     private Matiere matiere;
 
 
