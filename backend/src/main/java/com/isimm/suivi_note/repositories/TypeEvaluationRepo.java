@@ -9,7 +9,7 @@ import com.isimm.suivi_note.enums.Eval;
 
 
 public interface TypeEvaluationRepo extends JpaRepository<TypeEvaluation,Long> {
-    Optional<TypeEvaluation> findByLabel(Eval label);
+    Optional<TypeEvaluation> findByLabelle(Eval label);
 
 
 }
