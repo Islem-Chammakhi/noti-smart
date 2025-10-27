@@ -1,6 +1,6 @@
 package com.isimm.suivi_note.dto.notification;
 
-import com.isimm.suivi_note.enums.EvaluationLabel;
+import com.isimm.suivi_note.enums.Eval;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public record NoteDTO(
         double value,
         LocalDateTime dateSaisie,
-        EvaluationLabel typeEval,
+        Eval typeEval,
         String matiere
 ) {
 }

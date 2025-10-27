@@ -5,13 +5,13 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.isimm.suivi_note.models.Student;
+import com.isimm.suivi_note.models.Etudiant;
 
 
-public interface StudentRepo extends JpaRepository<Student,String> {
-    Student  findByCin (String cin);
+public interface StudentRepo extends JpaRepository<Etudiant,String> {
+    Optional<Etudiant>  findByCin (String cin);
 
-    List<Student> findByFiliereId(String filiereId);
+    List<Etudiant> findByFiliereId(String filiereId);
 }
 
 
