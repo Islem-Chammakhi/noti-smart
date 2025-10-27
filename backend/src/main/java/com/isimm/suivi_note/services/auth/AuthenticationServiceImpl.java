@@ -1,13 +1,10 @@
 package com.isimm.suivi_note.services.auth;
 
 import com.isimm.suivi_note.brevo.entities.BrevoOTPTemplate;
-import com.isimm.suivi_note.dto.AuthOtpLoginReq;
 import com.isimm.suivi_note.dto.UserDTO;
 import com.isimm.suivi_note.services.EmailService;
 import com.isimm.suivi_note.utils.OtpGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.isimm.suivi_note.enums.Role;
 import com.isimm.suivi_note.models.Filiere;
-import com.isimm.suivi_note.models.Student;
+import com.isimm.suivi_note.models.Etudiant;
 import com.isimm.suivi_note.models.User;
 import com.isimm.suivi_note.models.UserIsimm;
 import com.isimm.suivi_note.repositories.UserIsimmRepo;
@@ -77,7 +74,9 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
             System.out.println("les données envoyés sont : "+cin+" "+passwd+" "+otp);
             User user = (User) auth.getPrincipal();
             log.debug("Authenticated user = "+auth.isAuthenticated());
+
             if(passwordEncoder.matches(otp, user.getOtp()) && auth.isAuthenticated()){
+                //TODO: Remove OTP from DB after validation
 
                 final String accessToken = this.jwtService.generateAccessToken(user.getUsername());
                 final String refreshToken = this.jwtService.generateRefreshToken(user.getUsername());
@@ -108,7 +107,7 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
         checkUserCin(request.getCin());
         UserIsimm userIsimm=checkUserIsimm(request.getCin());
         checkUserPasswords(request.getPassword(),request.getConfirmPassword());
-        User user =Student.builder()
+        User user = Etudiant.builder()
                 .cin(userIsimm.getCin())
                 .firstName(userIsimm.getFirstName())
                 .lastName(userIsimm.getLastName())
