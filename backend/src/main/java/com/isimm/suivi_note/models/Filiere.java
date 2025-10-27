@@ -1,7 +1,6 @@
 package com.isimm.suivi_note.models;
 
 import java.util.List;
-import java.util.Objects;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

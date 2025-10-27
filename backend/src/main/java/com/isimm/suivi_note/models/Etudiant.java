@@ -28,6 +28,9 @@ public class Etudiant extends User {
     @OneToMany(mappedBy = "etudiant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes;
 
+    @OneToMany(mappedBy = "etudiant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications;
+
 
     // TODO: Change this to nullable = false and remove null values in DB
     /* TODO: Might include a service that returns Carte Etudiant

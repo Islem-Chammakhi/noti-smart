@@ -1,7 +1,7 @@
 package com.isimm.suivi_note.models;
 
+
 import java.util.List;
-import java.util.Set;
 
 import com.isimm.suivi_note.enums.Eval;
 
@@ -32,8 +32,8 @@ public class TypeEvaluation {
     private double coefficient;
 
     /* Do I need this? */
-    /*@OneToMany(mappedBy = "typeEvaluation")
-    private List<Note> noteList;*/
+    @OneToMany(mappedBy = "typeEvaluation")
+    private List<Note> noteList;
 
     /* I don't see we need this anytime soon */
     /*@ManyToMany(mappedBy = "allowed_evals")
