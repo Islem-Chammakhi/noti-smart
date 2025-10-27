@@ -28,8 +28,8 @@ public class Notification {
     private Long id;
     
     @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
+    @JoinColumn(name = "etudiant_id")
+    private Etudiant etudiant;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
