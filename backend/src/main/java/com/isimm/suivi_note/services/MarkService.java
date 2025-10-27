@@ -48,7 +48,7 @@ public class MarkService {
         Etudiant etudiant = note.getEtudiant();
         Matiere matiere = note.getMatiere();
 
-        List<Note> notes = markRepo.findByStudentAndSubject(etudiant, matiere);
+        List<Note> notes = markRepo.findByEtudiantAndMatiere(etudiant, matiere);
 
         //TODO: Why size == 3??
         if (notes.size()==3){
@@ -63,7 +63,7 @@ public class MarkService {
     }
 
     public List<SubjectMarkResponseDTO> getMarksByStudent(Etudiant etudiant){
-        List<Note> notes = markRepo.findByStudent(etudiant);
+        List<Note> notes = markRepo.findByEtudiant(etudiant);
         if(notes.isEmpty()){
                return List.of();
         }

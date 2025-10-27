@@ -12,10 +12,10 @@ import java.util.Optional;
 
 
 public interface MarkRepo extends JpaRepository<Note,Long> {
-    List<Note> findByStudent(Etudiant etudiant_id);
+    List<Note> findByEtudiant(Etudiant etudiant);
 
     @Query("SELECT m FROM Note m WHERE m.etudiant = :etudiant AND m.matiere = :matiere")
-    List<Note> findByStudentAndSubject(Etudiant etudiant, Matiere matiere);
+    List<Note> findByEtudiantAndMatiere(Etudiant etudiant, Matiere matiere);
 
 
     @Query("SELECT m FROM Note m WHERE m.etudiant.cin = :studentCin AND m.matiere.id.matiereId= :subjectId")
