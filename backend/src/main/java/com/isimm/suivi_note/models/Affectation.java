@@ -22,9 +22,9 @@ public class Affectation {
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "matiere_id", referencedColumnName = "matiereId"),
-            @JoinColumn(name = "ue_id", referencedColumnName = "ueId"),
-            @JoinColumn(name = "filiere_id", referencedColumnName = "filiere_id")
+            @JoinColumn(name = "matiere_id"),
+            @JoinColumn(name = "ue_id"),
+            @JoinColumn(name = "filiere_id")
     })
     private Matiere matiere;
 
