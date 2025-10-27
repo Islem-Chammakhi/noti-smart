@@ -24,25 +24,37 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "subject_eval_type_id"}))
+@Table(uniqueConstraints =
+        @UniqueConstraint(
+                columnNames = {
+                        "etudiant_id",
+                        "type_eval_id",
+                        "matiere_id"
+                }
+        )
+)
 
-public class Mark {
+public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long noteId;
 
     @Column(nullable = false)
-    private double mark;
+    private double valeur;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    @JoinColumn(name = "etudiant_id", nullable = false)
+    private Etudiant etudiant;
 
-    // 🔹 Plusieurs moyennes concernent une même matière
     @ManyToOne
-    @JoinColumn(name = "subject_eval_type_id", nullable = false)
-    private SubjectEvalType subjectEvalType;
+    @JoinColumn(name = "type_eval_id")
+    private TypeEvaluation typeEvaluation;
+
+    @ManyToOne
+    @JoinColumn(name = "matiere_id")
+    private Matiere matiere;
+
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
