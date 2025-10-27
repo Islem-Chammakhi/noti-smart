@@ -1,6 +1,7 @@
 package com.isimm.suivi_note.models;
 
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,8 @@ import java.util.Objects;
 @Embeddable
 public class MatierePK {
     private String matiereId;
+
+    @Embedded
     private UniteEnsPK ueId;
 
     @Override
