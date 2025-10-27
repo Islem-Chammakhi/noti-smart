@@ -1,21 +1,26 @@
 package com.isimm.suivi_note.repositories;
 
+import com.isimm.suivi_note.models.Note;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.isimm.suivi_note.models.Mark;
-import com.isimm.suivi_note.models.Student;
-import com.isimm.suivi_note.models.Subject;
+import com.isimm.suivi_note.models.Etudiant;
+import com.isimm.suivi_note.models.Matiere;
 
 import java.util.List;
+import java.util.Optional;
 
 
-public interface MarkRepo extends JpaRepository<Mark,Long> {
-    List<Mark> findByStudent(Student student_id);
+public interface MarkRepo extends JpaRepository<Note,Long> {
+    List<Note> findByStudent(Etudiant etudiant_id);
 
-    @Query("SELECT m FROM Mark m WHERE m.student = :student AND m.subjectEvalType.subject = :subject")
-    List<Mark> findByStudentAndSubject(Student student,Subject subject);
+    @Query("SELECT m FROM Note m WHERE m.etudiant = :etudiant AND m.matiere = :matiere")
+    List<Note> findByStudentAndSubject(Etudiant etudiant, Matiere matiere);
 
-    @Query("SELECT m FROM Mark m WHERE m.student.cin = :studentCin AND m.subjectEvalType.subject.id = :subjectId")
-    List<Mark> findByStudentCinAndSubjectId(String studentCin,String subjectId );
+
+    @Query("SELECT m FROM Note m WHERE m.etudiant.cin = :studentCin AND m.matiere.id.matiereId= :subjectId")
+    List<Note> findByStudentCinAndSubjectId(String studentCin, String subjectId );
+
+    @Query("SELECT n FROM Note n WHERE n.etudiant.cin = :etudiantCin")
+    Optional<List<Note>> findByEtudiantCin(String etudiantCin);
 }

@@ -32,7 +32,7 @@ public class NotificationService {
         });
 
         userEmitters.put(id, emitter);
-
+        log.info("Connected user id={}",id);
         return emitter;
     }
 
@@ -48,9 +48,8 @@ public class NotificationService {
                 log.error("Error sending to user id {}. message: {}", cin,e.getMessage(), e);
             }
         }
-        else{
-            log.warn("There's no connected user of cin ={}", cin);
-        }
+        //log.warn("There's no connected user of cin ={}", cin);
+
     }
 
 }

@@ -4,10 +4,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isimm.suivi_note.dto.AverageSubjectResponseDTO;
 import com.isimm.suivi_note.dto.StudentDTO;
-import com.isimm.suivi_note.dto.SubjectMarkResponseDTO;
 import com.isimm.suivi_note.dto.SubjectMarksDTO;
 import com.isimm.suivi_note.dto.SubjectResponseDTO;
-import com.isimm.suivi_note.models.Student;
+import com.isimm.suivi_note.models.Etudiant;
 import com.isimm.suivi_note.repositories.StudentRepo;
 import com.isimm.suivi_note.services.StudentService;
 
@@ -54,7 +53,7 @@ public class StudentController {
 
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     @GetMapping("/")
-    public ResponseEntity<List<Student>> getGetStudent () {
+    public ResponseEntity<List<Etudiant>> getGetStudent () {
         return ResponseEntity.ok(studentRep.findAll());
     }
 

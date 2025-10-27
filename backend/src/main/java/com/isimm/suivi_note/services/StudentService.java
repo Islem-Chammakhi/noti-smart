@@ -2,6 +2,9 @@ package com.isimm.suivi_note.services;
 
 import java.util.List;
 
+import com.isimm.suivi_note.enums.Eval;
+import com.isimm.suivi_note.models.*;
+import com.isimm.suivi_note.models.MoyenneMatiere;
 import org.springframework.stereotype.Service;
 
 import com.isimm.suivi_note.dto.AverageSubjectResponseDTO;
@@ -12,13 +15,9 @@ import com.isimm.suivi_note.dto.SubjectMarkResponseDTO;
 import com.isimm.suivi_note.dto.SubjectMarksDTO;
 import com.isimm.suivi_note.dto.SubjectResponseDTO;
 import com.isimm.suivi_note.enums.Role;
-import com.isimm.suivi_note.models.AverageSubject;
-import com.isimm.suivi_note.models.Filiere;
-import com.isimm.suivi_note.models.Mark;
-import com.isimm.suivi_note.models.Student;
-import com.isimm.suivi_note.models.Subject;
+import com.isimm.suivi_note.models.Matiere;
 import com.isimm.suivi_note.repositories.StudentRepo;
-import com.isimm.suivi_note.repositories.SubjectRepo;
+import com.isimm.suivi_note.repositories.MatiereRepo;
 
 import lombok.AllArgsConstructor;
 
@@ -27,11 +26,12 @@ import lombok.AllArgsConstructor;
 public class StudentService {
     private final StudentRepo studentRepo;
     private final MarkService markService;
-    private final AverageSubjectService averageSubjectService;
-    private final SubjectRepo subjectRepo;
+    private final MoyenneMatiereService moyenneMatiereService;
+    private final EvaluationService evalService;
+    private final MatiereService matiereService;
 
-    public Student addStudent(StudentDTO studentDto){
-        Student student = Student.builder()
+    public Etudiant addStudent(StudentDTO studentDto){
+        Etudiant etudiant = Etudiant.builder()
                 .cin(studentDto.cin())
                 .firstName(studentDto.firstName())
                 .lastName(studentDto.lastName())
@@ -40,69 +40,71 @@ public class StudentService {
                 // .registrationNumber(studentDto.registrationNumber())
                 .role(Role.STUDENT)
                 .build();
-        return studentRepo.save(student);
+        return studentRepo.save(etudiant);
     }
 
-    public Student getStudentByCin(String cin) {
+    public Etudiant getStudentByCin(String cin) {
         return studentRepo.findByCin(cin).orElseThrow(()-> new RuntimeException("student with cin "+cin+" not found !"));
     }
 
     public List<SubjectResponseDTO> getSubjectsByStudent(String studentCin) {
-        Student student =getStudentByCin(studentCin);
+        Etudiant etudiant =getStudentByCin(studentCin);
 
-        Filiere filiere = student.getFiliere();
+        Filiere filiere = etudiant.getFiliere();
 
-        return filiere.getSubjects().stream().map(subject -> {
-            List<EvaluationDTO> evals = subject.getSubjectEvalTypes().stream()
-                .map(s -> new EvaluationDTO(
-                    s.getEvalType().getLabel(),
-                    s.getEvalType().getCoefficient()
-                ))
-                .toList();
 
-            return SubjectResponseDTO.builder().subjectId(subject.getId()).subjectName(subject.getNom()).coefficient(subject.getCoefficient()).evaluations(evals).build();
-            
-        }).toList();
+        return filiere.getUeList().stream()
+                .map(UniteEnseignement::getMatiereList)
+                .flatMap(List::stream)
+                .map(mat->
+                     SubjectResponseDTO.builder()
+                        .subjectId(mat.getId().getMatiereId()) // TODO: DO we need this?!
+                        .subjectName(mat.getNom())
+                        .coefficient(mat.getCoefficient())
+                        .evaluations(evalService.toProjection(mat.getAllowedEvals()))
+                        .build()
+                ).toList();
+
     }
 
-    public List<SubjectMarkResponseDTO> getMarks(String cin){
-        Student student = getStudentByCin(cin); 
-        return markService.getMarksByStudent(student);
+    /*public List<SubjectMarkResponseDTO> getMarks(String cin){
+        Etudiant etudiant = getStudentByCin(cin);
+        return markService.getMarksByStudent(etudiant);
     }
-
+*/
     public List<AverageSubjectResponseDTO> getAverages(String cin) {
-        Student student = getStudentByCin(cin);
-        List<AverageSubject> avs = averageSubjectService.getAverageSubjectsByStudent(student);
+        Etudiant etudiant = getStudentByCin(cin);
+        List<MoyenneMatiere> avs = moyenneMatiereService.getAverageSubjectsByStudent(etudiant);
         return avs.stream()
                 .map(av -> AverageSubjectResponseDTO.builder()
-                        .average(av.getAverage())
-                        .subjectName(av.getSubject().getNom())
-                        .subjectId(av.getSubject().getId())
+                        .average(av.getValeur())
+                        .subjectName(av.getMatiere().getNom())
+                        .subjectId(av.getMatiere().getId().getMatiereId())
                         .build())
                 .toList();
     }
 
     public List<StudentMarksBySubjectDTO> getStudentMarksBySubjectAndFiliere(String filiereId,String subjectId){
-        List<Student> students = studentRepo.findByFiliereId(filiereId);
+        List<Etudiant> etudiants = studentRepo.findByFiliereId(filiereId);
 
-        return students.stream().map(student ->{
-            List<Mark> marks = markService.getMarksByStudentAndSubject(student.getCin(),subjectId);
+        return etudiants.stream().map(student ->{
+            List<Note> notes = markService.getMarksByStudentAndSubject(student.getCin(),subjectId); // This is cool
 
             Double ds = null, exam = null, oralOrTp = null;
 
-            for (Mark mark:marks){
-                String evalType = mark.getSubjectEvalType().getEvalType().getLabel().name();
+            for (Note note : notes){
+                Eval evalType = note.getTypeEvaluation().getLabelle();
 
                 switch (evalType) {
-                    case "DS":
-                        ds = mark.getMark();
+                    case Eval.DS:
+                        ds = note.getValeur();
                         break;
-                    case "EXAM":
-                        exam = mark.getMark();
+                    case Eval.EXAM:
+                        exam = note.getValeur();
                         break;
-                    case "ORAL":
-                    case "TP":
-                        oralOrTp = mark.getMark();
+                    case Eval.ORAL:
+                    case Eval.TP:
+                        oralOrTp = note.getValeur();
                         break;
                 }    
             }
@@ -117,35 +119,37 @@ public class StudentService {
     }
 
     public List<SubjectMarksDTO> getAllMarksByStudent(String studentCin) {
-    Student student = studentRepo.findByCin(studentCin)
+    Etudiant etudiant = studentRepo.findByCin(studentCin)
             .orElseThrow(() -> new RuntimeException("Étudiant non trouvé"));
 
-    // On récupère toutes les matières de la filière de cet étudiant
-    List<Subject> subjects = subjectRepo.findByFiliereId(student.getFiliere().getId());
 
-    return subjects.stream().map(subject -> {
-        List<Mark> marks = markService.getMarksByStudentAndSubject(student.getCin(), subject.getId());
+
+    // On récupère toutes les matières de la filière de cet étudiant
+    List<Matiere> matieres = matiereService.getMatieresByFiliere(etudiant.getFiliere().getId());
+
+    return matieres.stream().map(subject -> {
+        List<Note> notes = markService.getMarksByStudentAndSubject(etudiant.getCin(), subject.getId().getMatiereId());
 
         Double ds = null, exam = null, oralOrTp = null;
 
-        for (Mark mark : marks) {
-            String evalType = mark.getSubjectEvalType().getEvalType().getLabel().name();
+        for (Note note : notes) {
+            Eval evalType = note.getTypeEvaluation().getLabelle();
             switch (evalType) {
-                case "DS":
-                    ds = mark.getMark();
+                case Eval.DS:
+                    ds = note.getValeur();
                     break;
-                case "EXAM":
-                    exam = mark.getMark();
+                case Eval.EXAM:
+                    exam = note.getValeur();
                     break;
-                case "ORAL":
-                case "TP":
-                    oralOrTp = mark.getMark();
+                case Eval.ORAL:
+                case Eval.TP:
+                    oralOrTp = note.getValeur();
                     break;
             }
         }
 
         return SubjectMarksDTO.builder()
-                .subjectId(subject.getId())
+                .subjectId(subject.getId().getMatiereId())
                 .subjectName(subject.getNom())
                 .ds(ds)
                 .exam(exam)
