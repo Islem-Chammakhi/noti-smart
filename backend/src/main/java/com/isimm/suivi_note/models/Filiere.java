@@ -1,33 +1,34 @@
 package com.isimm.suivi_note.models;
 
 import java.util.List;
+import java.util.Objects;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
+@Getter
+@Setter
 public class Filiere {
 
     @Id
     private String id;
+    @Column
+    private String nom; // Ing Info
 
-    // private String nom ;
+    @Column
+    private int niveau; // 1, 2 ,3 ...
+
+    @OneToMany(mappedBy = "filiere")
+    private List<UniteEnseignement> ueList;
 
     @OneToMany(mappedBy = "filiere", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Student> students;
-
-    @OneToMany(mappedBy = "filiere", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Subject> subjects;
+    private List<Etudiant> etudiants;
 }
