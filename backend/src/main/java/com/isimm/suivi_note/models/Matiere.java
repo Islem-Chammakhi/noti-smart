@@ -38,7 +38,11 @@ public class Matiere {
     @ManyToMany
     @JoinTable(
             name = "matiere_typeeval",
-            joinColumns = @JoinColumn(name = "matiere_id"),
+            joinColumns = {
+                    @JoinColumn(name = "matiere_id"),
+                    @JoinColumn(name = "ue_id"),
+                    @JoinColumn(name = "filiere_id")
+            },
             inverseJoinColumns = @JoinColumn(name = "type_eval_id")
     )
     private Set<TypeEvaluation> allowedEvals;
