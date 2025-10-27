@@ -24,31 +24,28 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "subject_id"}))
-public class AverageSubject {
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"etudiant_id", "matiere_id"}))
+public class MoyenneMatiere {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private double average;
-
-    // @Column(nullable = true)
-    // private double coefficient;
+    private double valeur;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    @JoinColumn(name = "etudiant_id", nullable = false)
+    private Etudiant etudiant;
 
     @ManyToOne
-    @JoinColumn(name = "subject_id", nullable = false)
-    private Subject subject;
+    @JoinColumn(name = "matiere_id", nullable = false)
+    private Matiere matiere;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-        @PrePersist
+    @PrePersist
     public void prePersist() {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
