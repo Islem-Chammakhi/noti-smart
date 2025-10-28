@@ -40,8 +40,8 @@ public class Matiere {
             name = "matiere_typeeval",
             joinColumns = {
                     @JoinColumn(name = "matiere_id"),
-                    @JoinColumn(name = "ue_id"),
-                    @JoinColumn(name = "filiere_id")
+                    @JoinColumn(name = "filiere_id"),
+                    @JoinColumn(name = "ue_id")
             },
             inverseJoinColumns = @JoinColumn(name = "type_eval_id")
     )
