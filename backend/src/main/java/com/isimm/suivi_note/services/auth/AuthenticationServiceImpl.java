@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.isimm.suivi_note.enums.Role;
 import com.isimm.suivi_note.models.Filiere;
+import com.isimm.suivi_note.models.Admin;
 import com.isimm.suivi_note.models.Etudiant;
 import com.isimm.suivi_note.models.User;
 import com.isimm.suivi_note.models.UserIsimm;

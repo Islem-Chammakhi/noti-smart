@@ -2,13 +2,12 @@ package com.isimm.suivi_note.models;
 
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-@Getter
+@Data
 @NoArgsConstructor
 @Embeddable
 public class MatierePK {

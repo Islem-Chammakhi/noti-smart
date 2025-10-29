@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import com.isimm.suivi_note.models.*;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.isimm.suivi_note.dto.EvaluationMarkDTO;
@@ -31,10 +34,15 @@ public class MarkService {
                 .typeEvaluation(typeEval)
                 .build();
     }
-
+    @Transactional
     public void addBatchMark(List<Note>noteList){
-        markRepo.saveAll(noteList);
-
+        try {
+            markRepo.saveAll(noteList);
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Certaines notes existent déjà ou violent une contrainte d'intégrité");
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur inattendue lors de l'ajout des notes");
+        }   
         moyenneMatiereService.saveBatchAverage(
                 noteList.stream()
                     .map(this::calculateAndSaveAverageIfComplete)

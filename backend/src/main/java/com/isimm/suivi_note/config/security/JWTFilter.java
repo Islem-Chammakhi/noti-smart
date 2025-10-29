@@ -12,6 +12,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.isimm.suivi_note.services.auth.JWTService;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 
@@ -29,7 +31,7 @@ public class JWTFilter extends OncePerRequestFilter{
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        if (request.getServletPath().contains("/api/auth")){
+        if (request.getServletPath().contains("/api/auth")||request.getServletPath().contains("/api/userisimm")){
             filterChain.doFilter(request, response);
             return;
         }
@@ -37,10 +39,20 @@ public class JWTFilter extends OncePerRequestFilter{
         final String userCin;
         accessToken = jwtService.getTextFromCookie(request,"accessToken");
         if(accessToken==null){
-            filterChain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-        userCin=this.jwtService.extractUserCin(accessToken);
+        try {
+            userCin = jwtService.extractUserCin(accessToken);
+        } catch (ExpiredJwtException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }catch (JwtException e) {
+
+            // Token invalide (mauvaise signature, format incorrect, etc.) → 401
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
         if (userCin !=null && SecurityContextHolder.getContext().getAuthentication()==null){
             final UserDetails userdetails = this.userDetailsService.loadUserByUsername(userCin);
             if(this.jwtService.isTokenValid(userdetails.getUsername(), accessToken)){
@@ -49,11 +61,14 @@ public class JWTFilter extends OncePerRequestFilter{
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            }else {
+
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
         }
         filterChain.doFilter(request, response);
     }
-
 
 
 

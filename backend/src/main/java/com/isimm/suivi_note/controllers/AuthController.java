@@ -66,7 +66,7 @@ public class AuthController {
                     .body("Erreur Serveur");
         }
     }
-
+    
     @PostMapping("/otp")
     public ResponseEntity<UserDTO> loginOTP(@Valid @RequestBody OtpDTO otp, HttpServletRequest req, HttpServletResponse response) {
         try{
@@ -101,19 +101,29 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    // todo à rectifier avec la gestion des exception !
     public ResponseEntity<Void> register(@Valid @RequestBody final RegistrationRequest req) {   
         this.authenticationService.register(req);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<Void> refreshAccessToken(HttpServletRequest req,HttpServletResponse response) {
+    public ResponseEntity<String> refreshAccessToken(HttpServletRequest req,HttpServletResponse response) {
         String refreshToken = jwtService.getTextFromCookie(req,"refreshToken");
         RefreshRequest refreshRequest = new RefreshRequest(refreshToken);
-        AuthenticationResponse authResponse= this.authenticationService.refreshToken(refreshRequest);
-        if(refreshToken==null){
-            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("le refresh token est null !");
         }
+        String userCin;
+        AuthenticationResponse authResponse;
+        try {
+            userCin = jwtService.extractUserCin(refreshToken);
+            authResponse= this.authenticationService.refreshToken(refreshRequest);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("le refresh token est expiré 1 !");
+        }
+        
+
         Cookie accessTokenCookie = new Cookie("accessToken", authResponse.getAccessToken());
         accessTokenCookie.setHttpOnly(true);     
         // accessTokenCookie.setSecure(true);   HTTPS
@@ -122,7 +132,7 @@ public class AuthController {
 
         response.addCookie(accessTokenCookie);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("access token est génére avec success");
     }
 
     @GetMapping("/me")
