@@ -2,6 +2,7 @@ package com.isimm.suivi_note.controllers;
 
 import java.util.Collections;
 import java.util.List;
+import java.io.IOException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,18 +48,18 @@ public class AdminController {
     public ResponseEntity<List<Admin>> getGetStudent () {
         return ResponseEntity.ok(adminRepo.findAll());
     }
-
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/upload_marks")
     public ResponseEntity<String> uploadMarks(@RequestParam("file") MultipartFile file) {
         try {
             excelImportService.importExcel(file);
             return ResponseEntity.ok("Marks uploaded successfully in db ! ");
-        } catch (Exception e) {
+        } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error uploading file : " + e.getMessage());
+                    .body("Failed to import marks: " + e.getMessage());
         }
     }
+    
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{filiereId}/{subjectId}/student_marks")

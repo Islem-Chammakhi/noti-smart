@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.isimm.suivi_note.dto.notification.NoteDTO;
+import com.isimm.suivi_note.enums.Eval;
+import com.isimm.suivi_note.exceptions.InvalidExcelStructureException;
+import com.isimm.suivi_note.exceptions.InvalidFileNameException;
 import com.isimm.suivi_note.models.Matiere;
 import com.isimm.suivi_note.models.Note;
 import com.isimm.suivi_note.models.TypeEvaluation;
@@ -39,9 +42,12 @@ public class ExcelImportService {
     // @Transactional
     public void importExcel(MultipartFile file) throws IOException {
         Map<String, String> info = extractFileInfo(file.getOriginalFilename());
-        System.out.println("➡️ Matière code : " + info.get("subjectId") + " | Type évaluation : " + info.get("type"));
-        Matiere matiere = matiereRepo.findByIdAndAllowedEval(info.get("subjectId"), info.get("type"))
-                .orElseThrow(()->new EntityNotFoundException("Matiere id="+info.get("subjectId")+" n'a pas d'évaluation de type "+info.get("type")));
+        System.out.println("filiere id :"+info.get("filiereId")+" unité d'enseignament :"+info.get("ueId")+" matiere id :"+info.get("subjectId")+" type eval id :"+info.get("type"));
+
+
+
+        Matiere matiere = matiereRepo.findByIdAndAllowedEval(info.get("subjectId"), info.get("ueId"),info.get("filiereId"),Eval.valueOf(info.get("type")))
+                .orElseThrow(()->new EntityNotFoundException(" le quadriplet filiere ue matiere et type eval n'existe pas encore !"));
 
         TypeEvaluation type = matiere.getAllowedEvals().iterator().next();
         // ! Workbook détecte le  format Excel moderne (.xlsx)
@@ -60,14 +66,15 @@ public class ExcelImportService {
             if (row == null || isRowEmpty(row)) {System.out.println("row "+i+" is empty");continue;};
             Cell cinCell = row.getCell(5);
 
-            Cell markCell = row.getCell(7);
+            Cell markCell = row.getCell(8);
             String cin = cinCell.getStringCellValue();
             double mark = markCell.getNumericCellValue();
 
             if(markCell ==null ||cinCell==null || markCell.getCellType() != CellType.NUMERIC || cinCell.getCellType() == CellType.BLANK){
-                throw new RuntimeException("invalid inputs in file xl we cannot add marks ");
+                throw new InvalidExcelStructureException("Structure du fichier invalide : colonne CIN ou Note incorrecte.");
             }
             Etudiant etudiant = studentService.getStudentByCin(cin);
+            if(etudiant==null) throw new EntityNotFoundException("etudiant n'est pas trouvé avec cette cin !");
             noteList.add(markService.addMark(mark, etudiant, matiere, type));
 
             NoteDTO noteDTO= NoteDTO.builder()
@@ -86,13 +93,21 @@ public class ExcelImportService {
     
     private Map<String, String> extractFileInfo(String fileName) {
         Map<String, String> info = new HashMap<>();
-        if (fileName != null && fileName.contains("_")) {
-            String[] parts = fileName.split("_");
-            String codeMatiere = parts[0];
-            String type = parts[1].replace(".xlsx", "").replace(".xls", ""); // Retirer extension
-            info.put("subjectId", codeMatiere);
-            info.put("type", type.toUpperCase()); // DS, EXAM, TP...
+        if (fileName == null || !fileName.contains("-")) {
+            throw new InvalidFileNameException("Le nom du fichier doit suivre le format: <filiere>_<ue>_<codeMatiere>_<type>.xlsx");
         }
+        String[] parts = fileName.split("-");
+        if (parts.length != 4) {
+            throw new InvalidFileNameException("Format de nom de fichier invalide !");
+        }
+        String codeFiliere = parts[0];
+        String codeUe = parts[1];
+        String codeMatiere = parts[2];
+        String type = parts[3].replace(".xlsx", "").replace(".xls", ""); // Retirer extension
+        info.put("filiereId", codeFiliere);
+        info.put("ueId", codeUe);
+        info.put("subjectId", codeMatiere);
+        info.put("type", type.toUpperCase()); // DS, EXAM, TP...
         return info;
 }
 
