@@ -39,9 +39,11 @@ const LoginPage = () => {
       if (response.status === 202) {
         console.log("credentials true moving to otp !");
         router.push("/verify");
+      } else {
+        throw new Error(response.data);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      throw new Error(err?.message || String(err));
     } finally {
       setLoading(false);
     }

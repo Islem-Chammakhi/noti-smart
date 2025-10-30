@@ -94,7 +94,7 @@ const MarksTable = ({ columns, rows, title }: TableProps) => {
                                       : "secondary"
                                   }
                                   className={cn(
-                                    "px-3 py-1 text-sm font-semibold rounded-md",
+                                    "px-3 py-1 text-sm font-semibold rounded-md text-center",
                                     color === "success" &&
                                       "bg-green-100 text-green-700",
                                     color === "destructive" &&
