@@ -76,3 +76,16 @@ type StudentMarksPerSubject = {
   exam: number;
   oralOrTp: number;
 };
+
+type SubjectGeneralAverage = {
+  subjectId: string;
+  subjectName: string;
+  average: number;
+};
+
+type SubjectAverageStats = {
+  subjectId: string;
+  subjectName: string;
+  passed: number;
+  unpassed: number;
+};

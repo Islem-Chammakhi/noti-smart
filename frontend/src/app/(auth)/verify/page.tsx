@@ -4,10 +4,13 @@ import z from "zod";
 import myApi from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Loader from "@/components/Loader";
 
 const VerifyOtpPage = () => {
   const { updateUser } = useAuth();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const fields = [{ name: "otp", placeholder: "code otp ", type: "number" }];
 
@@ -16,29 +19,36 @@ const VerifyOtpPage = () => {
   });
   const handleSubmit = async (data: { otp: string }) => {
     try {
+      setLoading(true);
       const response = await myApi.loginWithOTP(data);
       if (response.status === 200) {
-        console.log(
-          "login successfully moving to persist login !",
-          response.data
-        );
         console.log(response.data);
         updateUser(response.data);
-        router.push("/student/marks");
+        const { role } = response.data;
+        role === "ADMIN"
+          ? router.push("/admin/upload")
+          : router.push("/student/marks");
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <AuthForm
-      fields={fields}
-      onSubmit={handleSubmit}
-      schema={otpSchema}
-      buttonText="Vérifier"
-      extra="merci de consulter le code envoyé par email"
-    />
+    <>
+      {loading && <Loader />}
+      <AuthForm
+        title="Vérification"
+        fields={fields}
+        onSubmit={handleSubmit}
+        schema={otpSchema}
+        buttonText="Vérifier"
+        extra="merci de consulter le code envoyé par email"
+        type="otp"
+      />
+    </>
   );
 };
 

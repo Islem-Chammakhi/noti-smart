@@ -1,26 +1,20 @@
 "use client";
-
 import { AppSideBar } from "@/components/AppSideBar";
+import Loader from "@/components/Loader";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { BookOpenCheck, ChartSpline } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function StudentLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
-  useEffect(() => {
-    console.log(user?.role);
-    if (!user || user.role !== "STUDENT") {
-      console.log("vous n'étes pas autorisé !");
-      router.push("/login");
-    }
-  });
+  if (loading) return <Loader />;
+  if ((!loading && !user) || user?.role !== "STUDENT") router.push("/login");
   const items = [
     {
       title: "Notes",

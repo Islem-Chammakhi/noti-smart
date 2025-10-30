@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import EvaluationPieCharts from "../components/EvaluationPieCharts";
-import AverageSubjectsPerFiliere from "@/app/admin/stats/components/AverageSubjectsPerFiliere";
 import SimpleRadarChart from "../components/RadarChart";
 
 export default function FiliereFilter() {
@@ -31,7 +30,7 @@ export default function FiliereFilter() {
           </SelectContent>
         </Select>
       </Card> */}
-      <AverageSubjectsPerFiliere />
+      {/* <AverageSubjectsPerFiliere /> */}
       <EvaluationPieCharts />
       <SimpleRadarChart />
     </div>

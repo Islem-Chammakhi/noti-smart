@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import MarksTable from "@/components/MarksTable";
 import myApi from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2 } from "lucide-react";
+import Loader from "@/components/Loader";
 
 const columns = ["#", "matiére", "DS", "TP/ORALE", "EXAM"];
 
@@ -37,9 +37,7 @@ export default function SubjectGradesPage() {
       {/* --- Tableau des notes --- */}
       <div>
         {loading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="animate-spin w-6 h-6 text-blue-600" />
-          </div>
+          <Loader />
         ) : data.length > 0 ? (
           <MarksTable
             columns={columns}
@@ -55,44 +53,3 @@ export default function SubjectGradesPage() {
     </div>
   );
 }
-
-// {/* --- Filtres --- */}
-// {/* <Card>
-//   <CardHeader>
-//     <CardTitle>Filtrer les résultats</CardTitle>
-//   </CardHeader>
-//   <CardContent>
-//     <div className="flex flex-col md:flex-row gap-4">
-//       {/* Select Filière */}
-//       <Select onValueChange={setSelectedFiliere}>
-//         <SelectTrigger className="w-[220px]">
-//           <SelectValue placeholder="Choisir une filière" />
-//         </SelectTrigger>
-//         <SelectContent>
-//           {filieres.map((f) => (
-//             <SelectItem key={f} value={f}>
-//               {f}
-//             </SelectItem>
-//           ))}
-//         </SelectContent>
-//       </Select>
-
-//       {/* Select Matière */}
-//       <Select
-//         onValueChange={setSelectedMatiere}
-//         disabled={!selectedFiliere}
-//       >
-//         <SelectTrigger className="w-[220px]">
-//           <SelectValue placeholder="Choisir une matière" />
-//         </SelectTrigger>
-//         <SelectContent>
-//           {matieres.map((m) => (
-//             <SelectItem key={m} value={m}>
-//               {m}
-//             </SelectItem>
-//           ))}
-//         </SelectContent>
-//       </Select>
-//     </div>
-//   </CardContent>
-// </Card> */}
