@@ -53,9 +53,12 @@ const RegisterPage = () => {
       if (response.status === 201) {
         console.log("user created successfully !");
         router.push("/login");
+      } else {
+        throw new Error(response.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
+      throw new Error(err?.message || String(err));
     } finally {
       setLoading(false);
     }

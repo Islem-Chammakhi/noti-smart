@@ -10,6 +10,7 @@ import {
   InputOTPSlot,
   InputOTPGroup,
 } from "@/components/ui/input-otp";
+import { useState } from "react";
 
 interface Field {
   name: string;
@@ -46,10 +47,14 @@ const AuthForm = ({
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
-
-  const submitHandler = (data: z.infer<typeof schema>) => {
-    console.log("Formulaire soumis :", data);
-    onSubmit(data);
+  const [error, setError] = useState<String | null>(null);
+  const submitHandler = async (data: z.infer<typeof schema>) => {
+    setError(null);
+    try {
+      await onSubmit(data);
+    } catch (err: any) {
+      setError(err.message || "Erreur lors de la requête.");
+    }
   };
 
   return (
@@ -108,7 +113,11 @@ const AuthForm = ({
             )}
           </div>
         ))}
-
+        {error && (
+          <div className="bg-red-100 text-red-700 px-4 py-2 rounded-lg shadow-sm border border-red-200">
+            {error}
+          </div>
+        )}
         <Button
           type="submit"
           disabled={isSubmitting}

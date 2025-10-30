@@ -8,8 +8,8 @@ import { useState } from "react";
 import Loader from "@/components/Loader";
 
 const VerifyOtpPage = () => {
-  const { updateUser } = useAuth();
   const router = useRouter();
+  const { updateUser } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const fields = [{ name: "otp", placeholder: "code otp ", type: "number" }];
@@ -28,9 +28,12 @@ const VerifyOtpPage = () => {
         role === "ADMIN"
           ? router.push("/admin/upload")
           : router.push("/student/marks");
+      } else {
+        throw new Error(response.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
+      throw new Error(err?.message || String(err));
     } finally {
       setLoading(false);
     }
