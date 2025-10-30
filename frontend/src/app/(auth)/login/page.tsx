@@ -51,11 +51,12 @@ const LoginPage = () => {
     <>
       {loading && <Loader />}
       <AuthForm
+        title="Connexion"
         fields={fields}
         onSubmit={handleLogin}
         schema={loginSchema}
         buttonText="Se connecter"
-        extra="Vous n'avez pas de compte ?"
+        extra="Vous n'avez pas de compte "
         path="/register"
       />
     </>

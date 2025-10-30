@@ -65,11 +65,12 @@ const RegisterPage = () => {
     <>
       {loading && <Loader />}
       <AuthForm
+        title="Création"
         fields={fields}
         onSubmit={handleRegister}
         schema={registerSchema}
         buttonText="Créer compte"
-        extra="Vous avez déja un compte ?"
+        extra="Vous avez déja un compte "
         path="/login"
       />
     </>

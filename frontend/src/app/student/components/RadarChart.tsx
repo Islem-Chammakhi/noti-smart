@@ -9,28 +9,20 @@ import {
 
 const data = [
   {
-    matiere: "Math",
-    moyenne: 15,
-  },
-  {
-    matiere: "Chinese",
-    moyenne: 20,
-  },
-  {
-    matiere: "English",
-    moyenne: 16,
-  },
-  {
-    matiere: "Geography",
+    matiere: "Systèmes repartis",
     moyenne: 8,
   },
   {
-    matiere: "Physics",
-    moyenne: 11,
+    matiere: "Administration des systèmes et des réseaux",
+    moyenne: 20,
   },
   {
-    matiere: "History",
-    moyenne: 13,
+    matiere: "Design Pattern et Conception par contrats",
+    moyenne: 16,
+  },
+  {
+    matiere: "Machine Learning avec Python",
+    moyenne: 8,
   },
 ];
 
