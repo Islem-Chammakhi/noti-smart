@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.isimm.suivi_note.brevo.entities.BrevoNoteTemplate;
+import com.isimm.suivi_note.dto.notification.NoteDTO;
+import com.isimm.suivi_note.exceptions.NoteExistException;
 import com.isimm.suivi_note.models.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -24,6 +27,9 @@ public class MarkService {
 
     private final MarkRepo markRepo;
     private final MoyenneMatiereService moyenneMatiereService;
+    private final NotificationService notificationService;
+    private final EmailService emailService;
+
     // @Transactional
     public Note addMark(double mark, Etudiant etudiant, Matiere matiere, TypeEvaluation typeEval){
         
@@ -39,7 +45,7 @@ public class MarkService {
         try {
             markRepo.saveAll(noteList);
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("Certaines notes existent déjà ou violent une contrainte d'intégrité");
+            throw new NoteExistException("Certaines notes déjà existent");
         } catch (Exception e) {
             throw new RuntimeException("Erreur inattendue lors de l'ajout des notes");
         }   
@@ -52,10 +58,23 @@ public class MarkService {
 
     }
 
+    /** This sends Note via three ways: SSE Notification, Email Service AND Mobile Notification*/
+    public void sendNote(NoteDTO noteDTO, String cin, String emailDst){
+        // Through SSE Notification (Web)
+        notificationService.sendNote(noteDTO, cin);
+
+        // Through email service
+        emailService.sendEmail(emailDst, new BrevoNoteTemplate(noteDTO.value(), noteDTO.typeEval().name(), noteDTO.matiere()));
+
+        // TODO: Through FCM
+
+    }
+
     private MoyenneMatiere calculateAndSaveAverageIfComplete(Note note){
         Etudiant etudiant = note.getEtudiant();
         Matiere matiere = note.getMatiere();
 
+        //TODO: Try to add DS Securité Informatique
         List<Note> notes = markRepo.findByEtudiantAndMatiere(etudiant, matiere);
 
         //TODO: Why size == 3??
