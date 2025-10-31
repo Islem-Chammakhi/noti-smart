@@ -52,32 +52,46 @@ axiosInstance.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    // Handle 401 Unauthorized - also redirect to login
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      if (isRefreshing) {
-        // Si un refresh est déjà en cours → on attend
-        return new Promise((resolve) => {
-          refreshSubscribers.push(() =>
-            resolve(axiosInstance(originalRequest))
-          );
-        });
+    // Handle 401 Unauthorized - invalid login credentials
+    if(error.response?.status === 401){
+      if(error.response?.data){
+        return Promise.reject(error.response?.data)
       }
-      originalRequest._retry = true;
-      isRefreshing = true;
-      try {
-        const response = await axiosInstance.post("/auth/refresh");
-        if (response.status === 200) {
-          console.log(response.data);
+
+      // Handle 401 Unauthorized - also redirect to login
+      else {
+        if(!originalRequest._retry){
+          if (isRefreshing) {
+            // Si un refresh est déjà en cours → on attend
+            return new Promise((resolve) => {
+              refreshSubscribers.push(() =>
+                  resolve(axiosInstance(originalRequest))
+              );
+            });
+          }
+          originalRequest._retry = true;
+          isRefreshing = true;
+          try {
+            const response = await axiosInstance.post("/auth/refresh");
+            if (response.status === 200) {
+              console.log(response.data);
+            }
+            isRefreshing = false;
+            onRefreshed();
+            return axiosInstance(originalRequest);
+          } catch (error) {
+            isRefreshing = false;
+            console.log("Unauthorized, redirecting to login...");
+            redirect("/login", RedirectType.replace);
+          }
+
         }
-        isRefreshing = false;
-        onRefreshed();
-        return axiosInstance(originalRequest);
-      } catch (error) {
-        isRefreshing = false;
-        console.log("Unauthorized, redirecting to login...");
-        redirect("/login", RedirectType.replace);
       }
+
+
     }
+
+
 
     // Handle 403 Forbidden - redirect to login
     if (error.response?.status === 403) {
