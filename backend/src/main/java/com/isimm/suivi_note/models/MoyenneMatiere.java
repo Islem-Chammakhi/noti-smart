@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"etudiant_id", "matiere_id"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"etudiant_id", "matiere_id","ue_id","filiere_id"}))
 public class MoyenneMatiere {
 
     @Id
