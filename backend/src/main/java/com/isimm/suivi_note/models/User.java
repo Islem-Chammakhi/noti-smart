@@ -1,5 +1,6 @@
 package com.isimm.suivi_note.models;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -49,6 +50,9 @@ public class User  implements UserDetails {
 
     @Column
     private String otp;
+
+    @Column
+    private LocalDateTime otpExpiry;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
