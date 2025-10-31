@@ -2,10 +2,13 @@ package com.isimm.suivi_note.services.auth;
 
 import com.isimm.suivi_note.brevo.entities.BrevoOTPTemplate;
 import com.isimm.suivi_note.dto.UserDTO;
+import com.isimm.suivi_note.exceptions.InvalidCredentials;
+import com.isimm.suivi_note.exceptions.InvalidOtpException;
 import com.isimm.suivi_note.services.EmailService;
 import com.isimm.suivi_note.utils.OtpGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +32,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -44,58 +51,61 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
     @Override
     // This checks if the user is logged in, if so, returns true so we can go to the next step (send OTP)
     public boolean login(final AuthenticationRequest request) {
-        try{
-            final Authentication auth = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getCin(), request.getPassword()));
+        final Authentication auth = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getCin(), request.getPassword()));
 
-            User user = (User) auth.getPrincipal();
-            if(auth.isAuthenticated()){
-                String otpCode = OtpGenerator.generateOtp();
-                emailService.sendEmail(
-                        user.getEmail(),
-                        new BrevoOTPTemplate(otpCode)
-                );
-                System.out.println("User is logged in = "+auth.isAuthenticated()+", otp="+otpCode+", sent email to "+user.getEmail());
+        User user = (User) auth.getPrincipal();
+        if(auth.isAuthenticated()){
+            String otpCode = OtpGenerator.generateOtp();
+            emailService.sendEmail(
+                    user.getEmail(),
+                    new BrevoOTPTemplate(otpCode)
+            );
+            System.out.println("User is logged in = "+auth.isAuthenticated()+", otp="+otpCode+", sent email to "+user.getEmail());
 
-                user.setOtp(passwordEncoder.encode(otpCode));
-                userRepository.save(user);
-            }
-
-            return auth.isAuthenticated();
-        }catch(Exception e){
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-            return false;
+            user.setOtp(passwordEncoder.encode(otpCode));
+            user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+            userRepository.save(user);
         }
+
+        return auth.isAuthenticated();
+
     }
 
     @Override
     public AuthenticationResponse loginWithOTP(String cin, String passwd, String otp) {
-        try{
-            final Authentication auth = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(cin, passwd));
-            System.out.println("les données envoyés sont : "+cin+" "+passwd+" "+otp);
-            User user = (User) auth.getPrincipal();
-            log.debug("Authenticated user = "+auth.isAuthenticated());
-
-            if(passwordEncoder.matches(otp, user.getOtp()) && auth.isAuthenticated()){
-                //TODO: Remove OTP from DB after validation
-
-                final String accessToken = this.jwtService.generateAccessToken(user.getUsername());
-                final String refreshToken = this.jwtService.generateRefreshToken(user.getUsername());
-                System.out.println("accessToken is :"+accessToken);
-                final String tokenType="Bearer";
-                UserDTO loggedUser=extractUserFromToken(accessToken);
-                return AuthenticationResponse.builder()
-                        .accessToken(accessToken)
-                        .refreshToken(refreshToken)
-                        .tokenType(tokenType)
-                        .user(loggedUser)
-                        .build();
-            }
-            return null;
-        } catch (Exception e) {
-            System.err.println(e.getMessage()+ ", "+e.getCause());
-            return null;
+        if(cin==null || passwd==null || cin.trim().isEmpty() || passwd.trim().isEmpty()){
+            throw new InvalidCredentials("Invalid username and/or password");
         }
+        final Authentication auth = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(cin, passwd));
+        System.out.println("les données envoyés sont : "+cin+" "+passwd+" "+otp);
+
+        if(!auth.isAuthenticated())
+            throw new InvalidCredentials("Invalid username or/and password");
+
+        User user = (User) auth.getPrincipal(); // This generated the problem
+
+        if(LocalDateTime.now().isAfter(user.getOtpExpiry()))
+            throw new InvalidOtpException("La date de l'otp est expiré, Veuillez réessayer");
+
+        if(!passwordEncoder.matches(otp, user.getOtp())){
+            throw new InvalidOtpException("L'otp saisie est invalide");
+        }
+        if(passwordEncoder.matches(otp, user.getOtp()) && auth.isAuthenticated()){
+            //TODO: Remove OTP from DB after validation
+
+            final String accessToken = this.jwtService.generateAccessToken(user.getUsername());
+            final String refreshToken = this.jwtService.generateRefreshToken(user.getUsername());
+            System.out.println("accessToken is :"+accessToken);
+            final String tokenType="Bearer";
+            UserDTO loggedUser=extractUserFromToken(accessToken);
+            return AuthenticationResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .tokenType(tokenType)
+                    .user(loggedUser)
+                    .build();
+        }
+        return null;
 
     }
 
@@ -129,6 +139,8 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
 
     @Override
     public AuthenticationResponse refreshToken(final RefreshRequest request) {
+        /*if (request.getRefreshToken().trim().isEmpty())
+            throw new Invalid*/
         final String newAccessToken = jwtService.refreshAccessToken(request.getRefreshToken());
         final String token_type="Bearer";
         return AuthenticationResponse.builder()
