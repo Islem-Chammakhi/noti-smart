@@ -44,8 +44,6 @@ public class ExcelImportService {
         Map<String, String> info = extractFileInfo(file.getOriginalFilename());
         System.out.println("filiere id :"+info.get("filiereId")+" unité d'enseignament :"+info.get("ueId")+" matiere id :"+info.get("subjectId")+" type eval id :"+info.get("type"));
 
-
-
         Matiere matiere = matiereRepo.findByIdAndAllowedEval(info.get("subjectId"), info.get("ueId"),info.get("filiereId"),Eval.valueOf(info.get("type")))
                 .orElseThrow(()->new EntityNotFoundException(" le quadriplet filiere ue matiere et type eval n'existe pas encore !"));
 
@@ -66,7 +64,7 @@ public class ExcelImportService {
             if (row == null || isRowEmpty(row)) {System.out.println("row "+i+" is empty");continue;};
             Cell cinCell = row.getCell(5);
 
-            Cell markCell = row.getCell(8);
+            Cell markCell = row.getCell(7); // Pourquoi la valeur est 8?
             String cin = cinCell.getStringCellValue();
             double mark = markCell.getNumericCellValue();
 
@@ -83,7 +81,8 @@ public class ExcelImportService {
                         .dateSaisie(LocalDateTime.now())
                         .typeEval(type.getLabelle())
                         .build();
-            notificationService.sendNote(noteDTO, cin);
+
+            markService.sendNote(noteDTO, cin, etudiant.getEmail());
             System.out.println(cin + " - "  + " : "+ mark+" added to List");
         }
         markService.addBatchMark(noteList);
@@ -94,7 +93,7 @@ public class ExcelImportService {
     private Map<String, String> extractFileInfo(String fileName) {
         Map<String, String> info = new HashMap<>();
         if (fileName == null || !fileName.contains("-")) {
-            throw new InvalidFileNameException("Le nom du fichier doit suivre le format: <filiere>_<ue>_<codeMatiere>_<type>.xlsx");
+            throw new InvalidFileNameException("Le nom du fichier doit suivre le format: <filiere>-<ue>-<codeMatiere>-<type>.xlsx");
         }
         String[] parts = fileName.split("-");
         if (parts.length != 4) {
