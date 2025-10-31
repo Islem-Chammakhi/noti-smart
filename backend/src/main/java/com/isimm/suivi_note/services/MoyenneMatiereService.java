@@ -3,6 +3,7 @@ package com.isimm.suivi_note.services;
 import java.util.List;
 
 import com.isimm.suivi_note.models.Matiere;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.isimm.suivi_note.models.MoyenneMatiere;
@@ -30,7 +31,10 @@ public class MoyenneMatiereService {
 
     }
 
+    @Transactional
     public void saveBatchAverage(List<MoyenneMatiere> moyenneList){
+
+        System.out.println("Going to save "+ moyenneList.size()+" moyennes");
         moyenneMatiereRepo.saveAll(moyenneList);
     }
 }
