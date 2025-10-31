@@ -3,7 +3,9 @@ package com.isimm.suivi_note.controllers;
 import com.isimm.suivi_note.dto.AuthOtpLoginReq;
 import com.isimm.suivi_note.dto.OtpDTO;
 import com.isimm.suivi_note.dto.UserDTO;
+import com.isimm.suivi_note.exceptions.InvalidCredentials;
 import com.isimm.suivi_note.utils.HttpCookieManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 import com.isimm.suivi_note.services.auth.JWTService;
@@ -33,41 +35,38 @@ public class AuthController {
     @PostMapping("/login")
     //TODO: Why does this returns cookie with refresh token
     public ResponseEntity<String> login(@Valid @RequestBody final AuthenticationRequest req, HttpServletResponse res) {
-        try {
-            boolean isAuthenticated = this.authenticationService.login(req);
-            if (isAuthenticated) {
-                res.addCookie(
-                        HttpCookieManager.generateCookie(
-                                "cin",
-                                req.getCin(),
-                                60 * 5,
-                                true
-                        )
-                );
 
-                res.addCookie(
-                        HttpCookieManager.generateCookie(
-                                "passwd",
-                                req.getPassword(),
-                                60 * 5,
-                                true
-                        )
-                );
-                return ResponseEntity.status(HttpStatus.ACCEPTED)
-                        .body("");
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("Données invalide !");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erreur Serveur");
+        boolean isAuthenticated = this.authenticationService.login(req);
+        if (isAuthenticated) {
+            res.addCookie(
+                    HttpCookieManager.generateCookie(
+                            "cin",
+                            req.getCin(),
+                            60 * 5,
+                            true
+                    )
+            );
+
+            res.addCookie(
+                    HttpCookieManager.generateCookie(
+                            "passwd",
+                            req.getPassword(),
+                            60 * 5,
+                            true
+                    )
+            );
+            return ResponseEntity.status(HttpStatus.ACCEPTED)
+                    .body("");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Données invalide !");
         }
+
     }
     
     @PostMapping("/otp")
     public ResponseEntity<UserDTO> loginOTP(@Valid @RequestBody OtpDTO otp, HttpServletRequest req, HttpServletResponse response) {
-        try{
+
             String cin = jwtService.getTextFromCookie(req, "cin");
             String passwd = jwtService.getTextFromCookie(req, "passwd");
 
@@ -75,27 +74,31 @@ public class AuthController {
 
             AuthenticationResponse authResponse= this.authenticationService.loginWithOTP(cin, passwd, otp.value());
 
+            // Delete cin and password cookies
+            Cookie cinCookie = HttpCookieManager.generateCookie("cin", "", 0, true);
+            Cookie passwdCookie = HttpCookieManager.generateCookie("passwd", "", 0, true);
+            response.addCookie(cinCookie);
+            response.addCookie(passwdCookie);
 
-            Cookie accessTokenCookie = new Cookie("accessToken", authResponse.getAccessToken());
-            accessTokenCookie.setHttpOnly(true);
-            // accessTokenCookie.setSecure(true);   HTTPS
-            accessTokenCookie.setPath("/");
-            accessTokenCookie.setMaxAge(15*60);
-
-            Cookie refreshTokenCookie = new Cookie("refreshToken", authResponse.getRefreshToken());
-            refreshTokenCookie.setHttpOnly(true);
-            // refreshTokenCookie.setSecure(true);
-            refreshTokenCookie.setPath("/");
-            refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+            Cookie accessTokenCookie =HttpCookieManager.generateCookie("accessToken", authResponse.getAccessToken(), 15*60, true);
+            Cookie refreshTokenCookie = HttpCookieManager.generateCookie("refreshToken", authResponse.getRefreshToken(), 7 * 24 * 60 * 60, true);
             response.addCookie(accessTokenCookie);
             response.addCookie(refreshTokenCookie);
 
         
             return ResponseEntity.ok(authResponse.getUser());
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(UserDTO.builder().build());
-        }
+
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest req, HttpServletResponse response){
+        Cookie accessCookie = HttpCookieManager.generateCookie("accessToken", "", 0,true);
+        Cookie refreshCookie= HttpCookieManager.generateCookie("refreshToken", "", 0,true);
+
+        response.addCookie(accessCookie);
+        response.addCookie(refreshCookie);
+
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/register")
@@ -136,6 +139,9 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<UserDTO> verifyUser(HttpServletRequest req){
         String token = jwtService.getTextFromCookie(req, "accessToken");
+        if(token==null || token.trim().isEmpty()){
+            throw new InvalidCredentials("User not logged in");
+        }
         UserDTO user = authenticationService.extractUserFromToken(token);
         return ResponseEntity.ok(user);
     }
