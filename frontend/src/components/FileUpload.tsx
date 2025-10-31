@@ -97,7 +97,8 @@ const FileUpload = () => {
           setMsg(response.data);
         }
       } catch (error: any) {
-        setMsg(error?.message || String(error));
+
+        setMsg(error?.response.data.message || String(error));
       }
     });
 
