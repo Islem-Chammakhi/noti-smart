@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import com.isimm.suivi_note.brevo.entities.BrevoNoteTemplate;
 import com.isimm.suivi_note.dto.notification.NoteDTO;
 import com.isimm.suivi_note.exceptions.NoteExistException;
-import com.isimm.suivi_note.fcm.service.FcmService;
+/*import com.isimm.suivi_note.fcm.service.FcmService;*/
 import com.isimm.suivi_note.models.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -32,7 +32,7 @@ public class MarkService {
     private final MoyenneMatiereService moyenneMatiereService;
     private final NotificationService notificationService;
     private final EmailService emailService;
-    private final FcmService fcmService;
+/*    private final FcmService fcmService;*/
 
     // @Transactional
     public Note addMark(double mark, Etudiant etudiant, Matiere matiere, TypeEvaluation typeEval){
@@ -70,8 +70,8 @@ public class MarkService {
         emailService.sendEmail(emailDst, new BrevoNoteTemplate(noteDTO.value(), noteDTO.typeEval().name(), noteDTO.matiere()));
 
         // Testing FCM
-        if(emailDst.equals("med.yassine.kharrat@gmail.com"))
-            fcmService.sendMobileNote(noteDTO);
+        /*if(emailDst.equals("med.yassine.kharrat@gmail.com"))
+            fcmService.sendMobileNote(noteDTO);*/
     }
 
     private MoyenneMatiere calculateAndSaveAverageIfComplete(Note note){
