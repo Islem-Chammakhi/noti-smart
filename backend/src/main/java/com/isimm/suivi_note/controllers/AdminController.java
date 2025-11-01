@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.io.IOException;
 
+import com.isimm.suivi_note.services.MoyenneMatiereService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +25,6 @@ import com.isimm.suivi_note.models.Admin;
 
 import com.isimm.suivi_note.repositories.AdminRepo;
 import com.isimm.suivi_note.services.auth.AdminService;
-import com.isimm.suivi_note.services.AverageSubjectService;
 import com.isimm.suivi_note.services.ExcelImportService;
 import com.isimm.suivi_note.services.StudentService;
 
@@ -40,7 +40,7 @@ public class AdminController {
     private final AdminRepo adminRepo;
     private final ExcelImportService excelImportService;
     private final StudentService studentService;
-    private final AverageSubjectService averageSubjectService;
+    private final MoyenneMatiereService averageSubjectService;
      @PostMapping("/")
     public ResponseEntity<Admin> addStudent(@Valid @RequestBody StudentDTO dto) {
         
@@ -93,7 +93,7 @@ public class AdminController {
         }
     }
 
-        @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{filiereId}/average_stats")
     public ResponseEntity<List<SubjectAverageStatsDTO>> getAverageStatsByFiliere(@PathVariable String filiereId) {
         try {

@@ -2,6 +2,8 @@ package com.isimm.suivi_note.services;
 
 import java.util.List;
 
+import com.isimm.suivi_note.dto.SubjectAverageStatsDTO;
+import com.isimm.suivi_note.dto.SubjectGeneralAverageDTO;
 import com.isimm.suivi_note.models.Matiere;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -36,5 +38,14 @@ public class MoyenneMatiereService {
 
         System.out.println("Going to save "+ moyenneList.size()+" moyennes");
         moyenneMatiereRepo.saveAll(moyenneList);
+    }
+
+
+    public List<SubjectGeneralAverageDTO> getGeneralAveragesByFiliere(String filiereId) {
+        return moyenneMatiereRepo.findByFiliereId(filiereId);
+    }
+
+    public List<SubjectAverageStatsDTO> getAverageStatsByFiliere(String filiereId) {
+        return moyenneMatiereRepo.findStatsByFiliereId(filiereId);
     }
 }
