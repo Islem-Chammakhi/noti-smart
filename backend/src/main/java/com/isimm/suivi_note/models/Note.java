@@ -20,7 +20,9 @@ import lombok.Setter;
                 columnNames = {
                         "etudiant_id",
                         "type_eval_id",
-                        "matiere_id"
+                        "matiere_id",
+                        "filiere_id",
+                        "ue_id"
                 }
         )
 )
@@ -45,8 +47,8 @@ public class Note {
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "matiere_id"),
+            @JoinColumn(name = "filiere_id"),
             @JoinColumn(name = "ue_id"),
-            @JoinColumn(name = "filiere_id")
     })
     private Matiere matiere;
 
