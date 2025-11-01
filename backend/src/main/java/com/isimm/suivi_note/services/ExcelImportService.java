@@ -64,7 +64,7 @@ public class ExcelImportService {
             if (row == null || isRowEmpty(row)) {System.out.println("row "+i+" is empty");continue;};
             Cell cinCell = row.getCell(5);
 
-            Cell markCell = row.getCell(7); // Pourquoi la valeur est 8?
+            Cell markCell = row.getCell(8); // Pourquoi la valeur est 8?
             String cin = cinCell.getStringCellValue();
             double mark = markCell.getNumericCellValue();
 
