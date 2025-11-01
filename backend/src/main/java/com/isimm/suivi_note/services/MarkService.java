@@ -8,10 +8,12 @@ import java.util.stream.Collectors;
 import com.isimm.suivi_note.brevo.entities.BrevoNoteTemplate;
 import com.isimm.suivi_note.dto.notification.NoteDTO;
 import com.isimm.suivi_note.exceptions.NoteExistException;
+import com.isimm.suivi_note.fcm.service.FcmService;
 import com.isimm.suivi_note.models.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ import com.isimm.suivi_note.repositories.MarkRepo;
 
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MarkService {
@@ -29,6 +32,7 @@ public class MarkService {
     private final MoyenneMatiereService moyenneMatiereService;
     private final NotificationService notificationService;
     private final EmailService emailService;
+    private final FcmService fcmService;
 
     // @Transactional
     public Note addMark(double mark, Etudiant etudiant, Matiere matiere, TypeEvaluation typeEval){
@@ -44,18 +48,17 @@ public class MarkService {
     public void addBatchMark(List<Note>noteList){
         try {
             markRepo.saveAll(noteList);
+            moyenneMatiereService.saveBatchAverage(
+                    noteList.stream()
+                            .map(this::calculateAndSaveAverageIfComplete)
+                            .filter(Objects::nonNull)
+                            .toList()
+            );
         } catch (DataIntegrityViolationException e) {
             throw new NoteExistException("Certaines notes déjà existent");
         } catch (Exception e) {
             throw new RuntimeException("Erreur inattendue lors de l'ajout des notes");
-        }   
-        moyenneMatiereService.saveBatchAverage(
-                noteList.stream()
-                    .map(this::calculateAndSaveAverageIfComplete)
-                    .filter(Objects::nonNull)
-                    .toList()
-        );
-
+        }
     }
 
     /** This sends Note via three ways: SSE Notification, Email Service AND Mobile Notification*/
@@ -66,8 +69,9 @@ public class MarkService {
         // Through email service
         emailService.sendEmail(emailDst, new BrevoNoteTemplate(noteDTO.value(), noteDTO.typeEval().name(), noteDTO.matiere()));
 
-        // TODO: Through FCM
-
+        // Testing FCM
+        if(emailDst.equals("med.yassine.kharrat@gmail.com"))
+            fcmService.sendMobileNote(noteDTO);
     }
 
     private MoyenneMatiere calculateAndSaveAverageIfComplete(Note note){
@@ -76,7 +80,7 @@ public class MarkService {
 
         //TODO: Try to add DS Securité Informatique
         List<Note> notes = markRepo.findByEtudiantAndMatiere(etudiant, matiere);
-
+        log.debug("This is current notes, supposedly after batch save: {}", notes);
         //TODO: Why size == 3??
         if (notes.size()==3){
             double average = 0;
