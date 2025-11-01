@@ -102,12 +102,12 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<!-- FCM -->
+		<!--&lt;!&ndash; FCM &ndash;&gt;
 		<dependency>
 			<groupId>com.google.firebase</groupId>
 			<artifactId>firebase-admin</artifactId>
 			<version>9.7.0</version>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 
 	<build>
