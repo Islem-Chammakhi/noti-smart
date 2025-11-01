@@ -33,7 +33,7 @@ public class MoyenneMatiereService {
 
     }
 
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void saveBatchAverage(List<MoyenneMatiere> moyenneList){
 
         System.out.println("Going to save "+ moyenneList.size()+" moyennes");
