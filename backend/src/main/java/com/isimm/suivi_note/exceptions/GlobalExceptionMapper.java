@@ -42,7 +42,6 @@ public class GlobalExceptionMapper {
 
     @ExceptionHandler(InvalidCredentials.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(InvalidCredentials e){
-        System.out.println("CATCHING THE DAMNED");
         return buildResponse(HttpStatus.UNAUTHORIZED, "Invalid credentials", e.getMessage());
     }
 
