@@ -24,22 +24,22 @@ public class MoyenneMatiereService {
         return moyenneMatiereRepo.findByEtudiant(etudiant).orElseThrow(()-> new RuntimeException("averages not prepared yet !"));
     }
 
-    public MoyenneMatiere addAverage(Etudiant etudiant, Matiere matiere, double average){
-        return MoyenneMatiere.builder()
-                                         .valeur(average)
-                                         .etudiant(etudiant)
-                                         .matiere(matiere)
-                                         .build();
-
+    public void addAverage(Etudiant etudiant, Matiere matiere, double average){
+        MoyenneMatiere av= MoyenneMatiere.builder()
+                .valeur(average)
+                .etudiant(etudiant)
+                .matiere(matiere)
+                .build();
+        moyenneMatiereRepo.save(av);
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    /*@Transactional(Transactional.TxType.REQUIRES_NEW)
     public void saveBatchAverage(List<MoyenneMatiere> moyenneList){
 
         System.out.println("Going to save "+ moyenneList.size()+" moyennes");
         moyenneMatiereRepo.saveAll(moyenneList);
     }
-
+*/
 
     public List<SubjectGeneralAverageDTO> getGeneralAveragesByFiliere(String filiereId) {
         return moyenneMatiereRepo.findByFiliereId(filiereId);

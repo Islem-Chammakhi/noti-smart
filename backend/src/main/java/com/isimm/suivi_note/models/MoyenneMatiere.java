@@ -32,8 +32,8 @@ public class MoyenneMatiere {
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "matiere_id"),
+            @JoinColumn(name = "filiere_id"),
             @JoinColumn(name = "ue_id"),
-            @JoinColumn(name = "filiere_id")
     })
     private Matiere matiere;
 

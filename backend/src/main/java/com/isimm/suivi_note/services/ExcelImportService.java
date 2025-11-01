@@ -58,7 +58,6 @@ public class ExcelImportService {
     @Transactional
     private void importMarks(Sheet sheet,Matiere matiere, TypeEvaluation type) {
         System.out.println("Number of lines = "+ sheet.getLastRowNum());
-        ArrayList<Note> noteList = new ArrayList<>();
         for (int i = 1; i <= sheet.getLastRowNum(); i++) { // on saute la première ligne (en-têtes)
             Row row = sheet.getRow(i);
             if (row == null || isRowEmpty(row)) {System.out.println("row "+i+" is empty");continue;};
@@ -73,7 +72,9 @@ public class ExcelImportService {
             }
             Etudiant etudiant = studentService.getStudentByCin(cin);
             if(etudiant==null) throw new EntityNotFoundException("etudiant n'est pas trouvé avec cette cin !");
-            noteList.add(markService.addMark(mark, etudiant, matiere, type));
+            markService.addMark(mark, etudiant, matiere, type);
+            System.out.println(cin + " - "  + " : "+ mark+" added successfully ! in db");
+
 
             NoteDTO noteDTO= NoteDTO.builder()
                         .value(mark)
@@ -85,8 +86,6 @@ public class ExcelImportService {
             markService.sendNote(noteDTO, cin, etudiant.getEmail());
             System.out.println(cin + " - "  + " : "+ mark+" added to List");
         }
-        markService.addBatchMark(noteList);
-        System.out.println("Enregistré "+ noteList.size() +" notes avec succès");
     }
 
     

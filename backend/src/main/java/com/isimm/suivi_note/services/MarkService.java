@@ -13,7 +13,9 @@ import com.isimm.suivi_note.models.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -35,31 +37,24 @@ public class MarkService {
 /*    private final FcmService fcmService;*/
 
     // @Transactional
-    public Note addMark(double mark, Etudiant etudiant, Matiere matiere, TypeEvaluation typeEval){
-        
-        return Note.builder()
+    public void addMark(double mark, Etudiant etudiant, Matiere matiere, TypeEvaluation typeEval){
+
+        Note m = Note.builder()
                 .valeur(mark)
                 .etudiant(etudiant)
                 .matiere(matiere)
                 .typeEvaluation(typeEval)
                 .build();
-    }
-    @Transactional
-    public void addBatchMark(List<Note>noteList){
-        try {
-            markRepo.saveAll(noteList);
-            moyenneMatiereService.saveBatchAverage(
-                    noteList.stream()
-                            .map(this::calculateAndSaveAverageIfComplete)
-                            .filter(Objects::nonNull)
-                            .toList()
-            );
-        } catch (DataIntegrityViolationException e) {
-            throw new NoteExistException("Certaines notes déjà existent");
-        } catch (Exception e) {
-            throw new RuntimeException("Erreur inattendue lors de l'ajout des notes");
+        try{
+            markRepo.save(m);
+
+            calculateAndSaveAverageIfComplete(m);
+
+        }catch (DataIntegrityViolationException e){
+            throw new NoteExistException("Note de l'étudiant "+etudiant.getCin()+" déjà existe");
         }
     }
+
 
     /** This sends Note via three ways: SSE Notification, Email Service AND Mobile Notification*/
     public void sendNote(NoteDTO noteDTO, String cin, String emailDst){
@@ -74,23 +69,22 @@ public class MarkService {
             fcmService.sendMobileNote(noteDTO);*/
     }
 
-    private MoyenneMatiere calculateAndSaveAverageIfComplete(Note note){
+    private void calculateAndSaveAverageIfComplete(Note note){
         Etudiant etudiant = note.getEtudiant();
         Matiere matiere = note.getMatiere();
 
-        //TODO: Try to add DS Securité Informatique
         List<Note> notes = markRepo.findByEtudiantAndMatiere(etudiant, matiere);
         System.out.println("This is current notes, supposedly after batch save: "+notes);
-        //TODO: Why size == 3??
-        if (notes.size()==2){
+
+        if (notes.size()==3){
             double average = 0;
             for (Note m : notes){
                 average += m.getValeur()*m.getTypeEvaluation().getCoefficient();
             }
-            return moyenneMatiereService.addAverage(etudiant, matiere, average);
+            moyenneMatiereService.addAverage(etudiant, matiere, average);
 
         }
-        return null;
+
     }
 
     public List<SubjectMarkResponseDTO> getMarksByStudent(Etudiant etudiant){
