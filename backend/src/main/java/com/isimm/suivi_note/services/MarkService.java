@@ -80,9 +80,9 @@ public class MarkService {
 
         //TODO: Try to add DS Securité Informatique
         List<Note> notes = markRepo.findByEtudiantAndMatiere(etudiant, matiere);
-        log.debug("This is current notes, supposedly after batch save: {}", notes);
+        System.out.println("This is current notes, supposedly after batch save: "+notes);
         //TODO: Why size == 3??
-        if (notes.size()==3){
+        if (notes.size()==2){
             double average = 0;
             for (Note m : notes){
                 average += m.getValeur()*m.getTypeEvaluation().getCoefficient();
