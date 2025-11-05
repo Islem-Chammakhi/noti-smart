@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
-  updateUser: (user: User) => void;
+  updateUser: (user: User | null) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const checkAuth = async () => {
       try {
         const response = await myApi.verifyAuth();
-        console.log(response);
+        console.log("tehredna !", response);
         setUser(response);
       } catch {
         setUser(null);

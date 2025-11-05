@@ -14,8 +14,29 @@ import Loader from "@/components/Loader";
 
 // --- Fake data pour le test ---
 const filieres = ["ING2_INFO"];
-const matieresParFiliere: Record<string, string[]> = {
-  ING2_INFO: ["397"],
+const matieresParFiliere: Record<string, { key: string; value: string }[]> = {
+  ING2_INFO: [
+    { key: "ECUE711", value: "Design pattern" },
+    { key: "ECUE7132", value: "Big data" },
+    { key: "ECUE7121", value: "Sécurité informatique" },
+    { key: "ECUE7131", value: "Systèmes repartis" },
+    { key: "ECUE7122", value: "Administration des systèmes et des réseaux" },
+    {
+      key: "ECUE7141",
+      value: "Traitement d’images et reconnaissance de formes",
+    },
+    {
+      key: "ECUE7142",
+      value: "Machine learning avec python",
+    },
+  ],
+  // CPI1: [
+  //   { key: "ECUE111", value: "Algèbre I" },
+  //   { key: "ECUE112", value: "Analyse I" },
+  //   { key: "ECUE121", value: "Algorithmique et structure des données" },
+  //   { key: "ECUE123", value: "Bases de données I" },
+  //   { key: "ECUE142", value: "Électrostatique–Magnétostatique" },
+  // ],
 };
 
 const columns = ["cin", "nom & prénom", "ds", "tp/orale", "examen"];
@@ -86,8 +107,8 @@ export default function SubjectGradesPage() {
               </SelectTrigger>
               <SelectContent>
                 {matieres.map((m) => (
-                  <SelectItem key={m} value={m}>
-                    {m}
+                  <SelectItem key={m.key} value={m.key}>
+                    {m.value}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -103,7 +124,7 @@ export default function SubjectGradesPage() {
         ) : data.length > 0 ? (
           <MarksTable
             columns={columns}
-            title={`Notes des étudiants — ${selectedMatiere} (${selectedFiliere})`}
+            title={`Notes des étudiants — ${selectedMatiere} - ${selectedFiliere}`}
             rows={data}
           />
         ) : (

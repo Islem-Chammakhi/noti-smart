@@ -27,13 +27,8 @@ export default function SubjectGradesPage() {
   useEffect(() => {
     user && fetchMarks(user.cin);
   }, []);
-
   return (
     <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-semibold text-gray-800">
-        Les notes disponible
-      </h2>
-
       {/* --- Tableau des notes --- */}
       <div>
         {loading ? (

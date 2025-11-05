@@ -37,6 +37,7 @@ public interface MoyenneMatiereRepo extends JpaRepository<MoyenneMatiere,Long> {
             )
             FROM MoyenneMatiere m
             WHERE m.matiere.ue.filiere.id = :filiereId
+            GROUP BY m.matiere.id.matiereId, m.matiere.nom
     """)
     List<SubjectAverageStatsDTO> findStatsByFiliereId(String filiereId);
 }

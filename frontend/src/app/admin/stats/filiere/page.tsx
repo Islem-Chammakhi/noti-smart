@@ -52,9 +52,6 @@ export default function FiliereFilter() {
     <>
       {loading && <Loader />}
       <div className="space-y-6 p-6">
-        <h2 className="text-2xl font-semibold text-gray-800">
-          Statistiques par filiére
-        </h2>
         <Card className="p-4">
           <CardHeader>
             <CardTitle>Sélectionner une filière</CardTitle>

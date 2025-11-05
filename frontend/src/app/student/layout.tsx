@@ -5,6 +5,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { BookOpenCheck, ChartSpline } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function StudentLayout({
   children,
@@ -13,8 +14,9 @@ export default function StudentLayout({
 }) {
   const { user, loading } = useAuth();
   const router = useRouter();
-  if (loading) return <Loader />;
-  if ((!loading && !user) || user?.role !== "STUDENT") router.push("/login");
+  useEffect(() => {
+    if ((!loading && !user) || user?.role !== "STUDENT") router.push("/login");
+  });
   const items = [
     {
       title: "Notes",
@@ -29,6 +31,7 @@ export default function StudentLayout({
   ];
   return (
     <div className="min-h-screen flex flex-col">
+      {loading && <Loader />}
       <SidebarProvider>
         <AppSideBar items={items} />
         <main className="flex-1 p-6 bg-gray-50">{children}</main>

@@ -1,68 +1,86 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 import {
   Radar,
   RadarChart,
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
+  ResponsiveContainer,
+  Tooltip,
 } from "recharts";
+import { Target } from "lucide-react";
+
+interface AverageSubjectsPerFiliereProps {
+  data: SubjectGeneralAverage[];
+}
 
 const data = [
-  {
-    matiere: "Systèmes repartis",
-    moyenne: 8,
-  },
-  {
-    matiere: "Administration des systèmes et des réseaux",
-    moyenne: 20,
-  },
-  {
-    matiere: "Design Pattern et Conception par contrats",
-    moyenne: 16,
-  },
-  {
-    matiere: "Machine Learning avec Python",
-    moyenne: 8,
-  },
+  { matiere: "Systèmes répartis", moyenne: 8 },
+  { matiere: "Administration Systèmes & Réseaux", moyenne: 20 },
+  { matiere: "Design Pattern & Conception", moyenne: 16 },
+  { matiere: "Machine Learning", moyenne: 8 },
 ];
 
-const SimpleRadarChart = () => {
+const SimpleRadarChart = ({ data }: AverageSubjectsPerFiliereProps) => {
+  if (data.length === 0) return null;
   return (
-    <Card className="shadow-sm border border-indigo-100 flex flex-col items-center justify-center">
-      <CardHeader className="flex items-center justify-center">
-        <CardTitle className="text-md text-center">Performance</CardTitle>
-      </CardHeader>
-      <CardContent className="flex items-center justify-center w-full h-full">
-        <RadarChart
-          style={{
-            width: "100%",
-            maxWidth: "500px",
-            maxHeight: "80vh",
-            aspectRatio: 1,
-          }}
-          responsive
-          outerRadius="80%"
-          data={data}
-          margin={{
-            top: 20,
-            left: 20,
-            right: 20,
-            bottom: 20,
-          }}
-        >
-          <PolarGrid />
-          <PolarAngleAxis dataKey="matiere" />
-          <PolarRadiusAxis />
-          <Radar
-            name="Mike"
-            dataKey="moyenne"
-            stroke="#8884d8"
-            fill="#8884d8"
-            fillOpacity={0.6}
-          />
-        </RadarChart>
-      </CardContent>
-    </Card>
+    <div className="w-full">
+      <Card className="shadow-xl border border-indigo-100 hover:shadow-2xl transition-all duration-300">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-lg font-semibold text-indigo-700">
+              Analyse des performances par matière
+            </CardTitle>
+            <CardDescription className="text-gray-500 text-sm">
+              Visualisation radar des moyennes obtenues
+            </CardDescription>
+          </div>
+          <div className="text-indigo-600">
+            <Target size={22} />
+          </div>
+        </CardHeader>
+
+        <CardContent className="flex items-center justify-center w-full h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart data={data} outerRadius="75%">
+              <PolarGrid stroke="#E5E7EB" />
+              <PolarAngleAxis
+                dataKey="subjectName"
+                tick={{ fill: "#4B5563", fontSize: 11 }}
+              />
+              <PolarRadiusAxis
+                domain={[0, 20]}
+                tick={{ fill: "#6B7280", fontSize: 10 }}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "white",
+                  borderRadius: "8px",
+                  border: "1px solid #E5E7EB",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                }}
+              />
+              <Radar
+                name="Moyenne"
+                dataKey="average"
+                stroke="#4F46E5"
+                fill="#6366F1"
+                fillOpacity={0.4}
+                animationDuration={800}
+              />
+            </RadarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

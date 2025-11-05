@@ -17,8 +17,11 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils"; // helper de shadcn
+import api from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "./ui/button";
 
 type AppSideBarProps = {
   title: string;
@@ -30,7 +33,20 @@ type AppSideBarProps = {
 
 export const AppSideBar = ({ items }: { items: AppSideBarProps[] }) => {
   const pathname = usePathname();
-
+  const router = useRouter();
+  const { updateUser } = useAuth();
+  const handleLogout = async () => {
+    try {
+      const res = await api.logout();
+      if (res.status === 200) {
+        console.log("deconnexion !");
+        updateUser(null);
+      }
+      router.push("/login");
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <Sidebar className="bg-white/70 backdrop-blur-xl border-r border-blue-100 shadow-lg">
       {/* ---- Header ---- */}
@@ -106,13 +122,13 @@ export const AppSideBar = ({ items }: { items: AppSideBarProps[] }) => {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link
-                href="/login"
-                className="flex items-center gap-3 text-red-600 hover:text-red-700 transition-all duration-200"
+              <Button
+                onClick={handleLogout}
+                className="bg-white flex items-center gap-3 text-red-600 hover:text-red-700 transition-all duration-200"
               >
                 <LogOut size={20} />
                 <span>Se déconnecter</span>
-              </Link>
+              </Button>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

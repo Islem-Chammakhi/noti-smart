@@ -82,6 +82,7 @@ public class MarkService {
                 average += m.getValeur()*m.getTypeEvaluation().getCoefficient();
             }
             moyenneMatiereService.addAverage(etudiant, matiere, average);
+            System.out.println("moyenne de l'étudiant" +etudiant.getFirstName()+" est "+average+"");
 
         }
 

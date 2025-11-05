@@ -29,7 +29,7 @@ class ApiService {
     const response = await axiosInstance.post("/auth/logout");
 
     //TODO: manage logout
-    return response.data;
+    return response;
   }
 
   async verifyAuth(): Promise<User> {
@@ -62,6 +62,13 @@ class ApiService {
   async getSubjectAverageStats(filiereId: string) {
     const response = await axiosInstance.get(
       `/admin/${filiereId}/average_stats`
+    );
+    return response;
+  }
+
+  async getSubjectsAverageByStudent(cin: string) {
+    const response = await axiosInstance.get(
+      `/student/${cin}/subjects/average`
     );
     return response;
   }

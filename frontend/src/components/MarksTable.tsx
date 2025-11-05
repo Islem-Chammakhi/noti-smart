@@ -83,7 +83,7 @@ const MarksTable = ({ columns, rows, title }: TableProps) => {
                             : "destructive";
 
                           return (
-                            <TableCell key={key} className="text-center">
+                            <TableCell key={key} className="text-left">
                               {value ? (
                                 <Badge
                                   variant={
@@ -94,7 +94,7 @@ const MarksTable = ({ columns, rows, title }: TableProps) => {
                                       : "secondary"
                                   }
                                   className={cn(
-                                    "px-3 py-1 text-sm font-semibold rounded-md text-center",
+                                    "px-3 py-1 text-sm font-semibold rounded-md ",
                                     color === "success" &&
                                       "bg-green-100 text-green-700",
                                     color === "destructive" &&

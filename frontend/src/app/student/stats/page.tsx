@@ -1,16 +1,41 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EvaluationPieCharts from "../components/EvaluationPieCharts";
 import SimpleRadarChart from "../components/RadarChart";
+import { useAuth } from "@/hooks/useAuth";
+import myApi from "@/lib/api";
 
 export default function FiliereFilter() {
-  const [filiere, setFiliere] = useState("");
+  const { user } = useAuth();
 
+  const [loading, setLoading] = useState(false);
+  const [subjectGeneralAverage, setSubjectGeneralAverage] = useState<
+    SubjectGeneralAverage[]
+  >([]);
+
+  const fetchData = async () => {
+    if (!user) {
+      setSubjectGeneralAverage([]);
+    } else {
+      try {
+        setLoading(true);
+
+        const res1 = await myApi.getSubjectsAverageByStudent(user?.cin);
+        if (res1.status === 200) {
+          setSubjectGeneralAverage(res1.data);
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+  useEffect(() => {
+    user && fetchData();
+  }, []);
   return (
     <div className="space-y-6 p-6">
-      <h2 className="text-2xl font-semibold text-gray-800">
-        Statistiques par étudiant
-      </h2>
       {/* <Card className="p-4">
         <CardHeader>
           <CardTitle>Sélectionner une filière</CardTitle>
@@ -32,7 +57,7 @@ export default function FiliereFilter() {
       </Card> */}
       {/* <AverageSubjectsPerFiliere /> */}
       <EvaluationPieCharts />
-      <SimpleRadarChart />
+      <SimpleRadarChart data={subjectGeneralAverage} />
     </div>
   );
 }

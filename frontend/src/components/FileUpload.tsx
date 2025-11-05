@@ -26,7 +26,7 @@ type FileWithProgress = {
 const FileUpload = () => {
   const [files, setFiles] = useState<FileWithProgress[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [msg, setMsg] = useState("");
+  const [msg, setMsg] = useState<String | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -55,13 +55,16 @@ const FileUpload = () => {
     setFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
   };
 
-  const handleClear = () => setFiles([]);
+  const handleClear = () => {
+    setFiles([]);
+    setMsg(null);
+  };
 
   const handleUpload = async () => {
     if (files.length === 0 || uploading) return;
 
     setUploading(true);
-    setMsg("");
+    setMsg(null);
     const uploadPromises = files.map(async (fileWithProgress) => {
       const formData = new FormData();
       formData.append("file", fileWithProgress.file);
@@ -94,10 +97,13 @@ const FileUpload = () => {
             )
           );
         } else {
-          setMsg(response.data);
+          setMsg(response.data.message);
+          console.log("erreur lenna " + response.data);
         }
       } catch (error: any) {
-
+        console.log(
+          "erreur lenna catch " + error?.response.data.message || String(error)
+        );
         setMsg(error?.response.data.message || String(error));
       }
     });
@@ -157,24 +163,20 @@ const FileUpload = () => {
               Tout effacer
             </Button>
           </div>
+          {msg && (
+            <div className="bg-red-100 text-red-700 px-4 py-2 rounded-lg shadow-sm border border-red-200">
+              {msg}
+            </div>
+          )}
         </div>
       )}
 
       {/* Message d’erreur */}
-      {msg && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded-lg shadow-sm border border-red-200">
-            {msg}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
 export default FileUpload;
-
-/* ---------- Sous-composants ---------- */
 
 const formatFileSize = (bytes: number) => {
   if (bytes === 0) return "0 B";
@@ -183,13 +185,6 @@ const formatFileSize = (bytes: number) => {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 };
-
-// type FileWithProgress = {
-//   id: string;
-//   file: File;
-//   progress: number;
-//   uploaded: boolean;
-// };
 
 type FileListProps = {
   files: FileWithProgress[];
@@ -201,7 +196,7 @@ const FileList = ({ files, onRemove, uploading }: FileListProps) => {
   return (
     <div className="w-full space-y-3">
       {files.map((file) => (
-        <div>
+        <div key={file.id}>
           <Item className="border border-gray-200 rounded-xl shadow-sm bg-white/70 backdrop-blur-md hover:shadow-md transition-all duration-200">
             <ItemMedia variant="icon">
               {file.uploaded ? (

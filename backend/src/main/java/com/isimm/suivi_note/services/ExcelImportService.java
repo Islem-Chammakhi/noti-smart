@@ -45,7 +45,7 @@ public class ExcelImportService {
         System.out.println("filiere id :"+info.get("filiereId")+" unité d'enseignament :"+info.get("ueId")+" matiere id :"+info.get("subjectId")+" type eval id :"+info.get("type"));
 
         Matiere matiere = matiereRepo.findByIdAndAllowedEval(info.get("subjectId"), info.get("ueId"),info.get("filiereId"),Eval.valueOf(info.get("type")))
-                .orElseThrow(()->new EntityNotFoundException(" le quadriplet filiere ue matiere et type eval n'existe pas encore !"));
+                .orElseThrow(()->new EntityNotFoundException(" On ne peut pas ajouter des notes d'une matiére qui n'exsite pas dans la base  !"));
 
         TypeEvaluation type = matiere.getAllowedEvals().iterator().next();
         // ! Workbook détecte le  format Excel moderne (.xlsx)
